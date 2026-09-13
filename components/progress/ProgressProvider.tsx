@@ -1,0 +1,98 @@
+"use client";
+
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  defaultProgress,
+  lessonKey,
+  readProgress,
+  writeProgress,
+  type ProgressState,
+} from "@/lib/progress/storage";
+
+type ProgressContextValue = {
+  hydrated: boolean;
+  isComplete: (chapterSlug: string, lessonSlug: string) => boolean;
+  markComplete: (chapterSlug: string, lessonSlug: string, complete?: boolean) => void;
+  setQuizResult: (
+    chapterSlug: string,
+    lessonSlug: string,
+    correct: number,
+    total: number
+  ) => void;
+  getQuizResult: (
+    chapterSlug: string,
+    lessonSlug: string
+  ) => { correct: number; total: number } | undefined;
+  chapterPercent: (chapterSlug: string, lessonSlugs: string[]) => number;
+  lastVisited: ProgressState["lastVisited"];
+  setLastVisited: (chapterSlug: string, lessonSlug: string) => void;
+};
+
+const ProgressContext = createContext<ProgressContextValue | null>(null);
+
+export function ProgressProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<ProgressState>(defaultProgress());
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage on mount
+    setState(readProgress());
+    setHydrated(true);
+  }, []);
+
+  const update = (updater: (prev: ProgressState) => ProgressState) => {
+    setState((prev) => {
+      const next = updater(prev);
+      writeProgress(next);
+      return next;
+    });
+  };
+
+  const value = useMemo<ProgressContextValue>(
+    () => ({
+      hydrated,
+      isComplete: (chapterSlug, lessonSlug) =>
+        Boolean(state.completedLessons[lessonKey(chapterSlug, lessonSlug)]),
+      markComplete: (chapterSlug, lessonSlug, complete = true) =>
+        update((prev) => ({
+          ...prev,
+          completedLessons: {
+            ...prev.completedLessons,
+            [lessonKey(chapterSlug, lessonSlug)]: complete,
+          },
+        })),
+      setQuizResult: (chapterSlug, lessonSlug, correct, total) =>
+        update((prev) => ({
+          ...prev,
+          quizScores: {
+            ...prev.quizScores,
+            [lessonKey(chapterSlug, lessonSlug)]: { correct, total },
+          },
+        })),
+      getQuizResult: (chapterSlug, lessonSlug) =>
+        state.quizScores[lessonKey(chapterSlug, lessonSlug)],
+      chapterPercent: (chapterSlug, lessonSlugs) => {
+        if (lessonSlugs.length === 0) return 0;
+        const done = lessonSlugs.filter((slug) =>
+          Boolean(state.completedLessons[lessonKey(chapterSlug, slug)])
+        ).length;
+        return Math.round((done / lessonSlugs.length) * 100);
+      },
+      lastVisited: state.lastVisited,
+      setLastVisited: (chapterSlug, lessonSlug) =>
+        update((prev) => ({
+          ...prev,
+          lastVisited: { chapterSlug, lessonSlug, at: Date.now() },
+        })),
+    }),
+    [state, hydrated]
+  );
+
+  return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
+}
+
+export function useProgress(): ProgressContextValue {
+  const ctx = useContext(ProgressContext);
+  if (!ctx) throw new Error("useProgress must be used within a ProgressProvider");
+  return ctx;
+}

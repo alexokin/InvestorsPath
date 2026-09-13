@@ -1,0 +1,49 @@
+import type { MetadataRoute } from "next";
+import { getAllLessons, getChapters } from "@/lib/content/loader";
+import { SITE_URL } from "@/lib/site";
+
+// Static export has no server to compute this per-request; force-static
+// makes `next build` emit sitemap.xml as a plain static file in out/.
+export const dynamic = "force-static";
+
+const STATIC_ROUTES: { path: string; priority: number }[] = [
+  { path: "/", priority: 1 },
+  { path: "/curriculum/", priority: 0.8 },
+  { path: "/glossary/", priority: 0.7 },
+  { path: "/cheatsheets/", priority: 0.7 },
+  { path: "/tools/", priority: 0.7 },
+];
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const chapters = getChapters();
+  const lessons = getAllLessons();
+
+  const entries: MetadataRoute.Sitemap = STATIC_ROUTES.map(({ path, priority }) => ({
+    url: `${SITE_URL}${path}`,
+    changeFrequency: "weekly",
+    priority,
+  }));
+
+  for (const chapter of chapters) {
+    entries.push({
+      url: `${SITE_URL}${chapter.href}`,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+    entries.push({
+      url: `${SITE_URL}/chapters/${chapter.slug}/cheatsheet/`,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    });
+  }
+
+  for (const lesson of lessons) {
+    entries.push({
+      url: `${SITE_URL}${lesson.href}`,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    });
+  }
+
+  return entries;
+}

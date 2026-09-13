@@ -1,0 +1,270 @@
+- id: compound-interest
+  name_he: ריבית דריבית
+  expression: "FV = PV * (1 + r)^n"
+  variables:
+    - symbol: FV
+      name_he: ערך עתידי
+    - symbol: PV
+      name_he: ערך נוכחי
+    - symbol: r
+      name_he: ריבית שנתית
+    - symbol: n
+      name_he: מספר שנים
+  notes_he: ככל ש-n גדל, הצמיחה נעשית מעריכית ולא ליניארית.
+  relatedTool: compound
+
+- id: market-cap
+  name_he: שווי שוק
+  expression: "Market Cap = Share Price * Shares Outstanding"
+  variables:
+    - symbol: Share Price
+      name_he: מחיר מניה
+    - symbol: Shares Outstanding
+      name_he: מספר מניות במחזור
+  notes_he: שווי השוק אינו אומר דבר על זול או יקר בלי להשוות אותו לרווחים ולנכסים.
+
+- id: gross-margin
+  name_he: שולי רווח גולמי
+  expression: "Gross Margin = Gross Profit / Revenue"
+  variables:
+    - symbol: Gross Profit
+      name_he: רווח גולמי
+    - symbol: Revenue
+      name_he: הכנסות
+  notes_he: מודד כמה נשאר לחברה מכל שקל מכירות אחרי עלות המכר בלבד.
+
+- id: operating-margin
+  name_he: שולי רווח תפעולי
+  expression: "Operating Margin = Operating Income / Revenue"
+  variables:
+    - symbol: Operating Income
+      name_he: רווח תפעולי
+    - symbol: Revenue
+      name_he: הכנסות
+  notes_he: משקף את הרווחיות מהפעילות הליבתית, לפני ריבית ומס.
+
+- id: net-margin
+  name_he: שולי רווח נקי
+  expression: "Net Margin = Net Income / Revenue"
+  variables:
+    - symbol: Net Income
+      name_he: רווח נקי
+    - symbol: Revenue
+      name_he: הכנסות
+  notes_he: השורה התחתונה, אחרי כל ההוצאות, הריבית והמס.
+
+- id: roe
+  name_he: תשואה על ההון
+  expression: "ROE = Net Income / Shareholders Equity"
+  variables:
+    - symbol: Net Income
+      name_he: רווח נקי
+    - symbol: Shareholders Equity
+      name_he: הון עצמי
+  notes_he: מודד כמה רווח מייצר כל שקל הון עצמי; רגיש למינוף.
+
+- id: roic
+  name_he: תשואה על ההון המושקע
+  expression: "ROIC = NOPAT / Invested Capital"
+  variables:
+    - symbol: NOPAT
+      name_he: רווח תפעולי לאחר מס
+    - symbol: Invested Capital
+      name_he: הון מושקע
+  notes_he: מודד תשואה על כל ההון שהופעל בעסק, ללא תלות במבנה המימון.
+
+- id: current-ratio
+  name_he: יחס שוטף
+  expression: "Current Ratio = Current Assets / Current Liabilities"
+  variables:
+    - symbol: Current Assets
+      name_he: נכסים שוטפים
+    - symbol: Current Liabilities
+      name_he: התחייבויות שוטפות
+  notes_he: יחס מעל 1 מרמז על יכולת לכסות התחייבויות קצרות טווח.
+
+- id: debt-to-equity
+  name_he: יחס חוב להון
+  expression: "D/E = Total Debt / Shareholders Equity"
+  variables:
+    - symbol: Total Debt
+      name_he: סך חוב
+    - symbol: Shareholders Equity
+      name_he: הון עצמי
+  notes_he: מודד כמה מהמימון מגיע מחוב לעומת הון עצמי.
+
+- id: interest-coverage
+  name_he: יחס כיסוי ריבית
+  expression: "Interest Coverage = EBIT / Interest Expense"
+  variables:
+    - symbol: EBIT
+      name_he: רווח לפני ריבית ומס
+    - symbol: Interest Expense
+      name_he: הוצאות ריבית
+  notes_he: יחס נמוך מרמז על סיכון גבוה יותר בעמידה בתשלומי הריבית.
+
+- id: pe
+  name_he: מכפיל רווח
+  expression: "P/E = Share Price / Earnings Per Share"
+  variables:
+    - symbol: Share Price
+      name_he: מחיר מניה
+    - symbol: Earnings Per Share
+      name_he: רווח למניה
+  notes_he: כמה שנות רווח נוכחיות המשקיעים מוכנים לשלם עבור המניה.
+
+- id: pb
+  name_he: מכפיל הון
+  expression: "P/B = Share Price / Book Value Per Share"
+  variables:
+    - symbol: Share Price
+      name_he: מחיר מניה
+    - symbol: Book Value Per Share
+      name_he: הון עצמי למניה
+  notes_he: משווה את מחיר השוק לערך ההון העצמי החשבונאי.
+
+- id: ps
+  name_he: מכפיל מכירות
+  expression: "P/S = Market Cap / Revenue"
+  variables:
+    - symbol: Market Cap
+      name_he: שווי שוק
+    - symbol: Revenue
+      name_he: הכנסות
+  notes_he: שימושי במיוחד לחברות שעדיין לא רווחיות.
+
+- id: ev-ebitda
+  name_he: מכפיל EV/EBITDA
+  expression: "EV/EBITDA = Enterprise Value / EBITDA"
+  variables:
+    - symbol: Enterprise Value
+      name_he: שווי פעילות
+    - symbol: EBITDA
+      name_he: רווח תפעולי לפני פחת והפחתות
+  notes_he: מנטרל הבדלי מבנה הון ומדיניות פחת בהשוואה בין חברות.
+
+- id: p-fcf
+  name_he: מכפיל תזרים מזומנים חופשי
+  expression: "P/FCF = Market Cap / Free Cash Flow"
+  variables:
+    - symbol: Market Cap
+      name_he: שווי שוק
+    - symbol: Free Cash Flow
+      name_he: תזרים מזומנים חופשי
+  notes_he: מתמקד במזומן בפועל ולא ברווח החשבונאי.
+
+- id: peg
+  name_he: יחס PEG
+  expression: "PEG = (P/E) / Expected Growth Rate"
+  variables:
+    - symbol: P/E
+      name_he: מכפיל רווח
+    - symbol: Expected Growth Rate
+      name_he: שיעור צמיחה צפוי באחוזים
+  notes_he: מנרמל את מכפיל הרווח לפי קצב הצמיחה הצפוי.
+
+- id: fcf
+  name_he: תזרים מזומנים חופשי
+  expression: "FCF = Cash Flow from Operations - CapEx"
+  variables:
+    - symbol: Cash Flow from Operations
+      name_he: תזרים מפעילות שוטפת
+    - symbol: CapEx
+      name_he: השקעות הוניות
+  notes_he: המזומן שנותר לחברה אחרי השקעה בשימור ובצמיחה של הנכסים.
+  relatedTool: dcf
+
+- id: graham-number
+  name_he: נוסחת גרהאם
+  expression: "Graham Number = sqrt(22.5 * EPS * Book Value Per Share)"
+  variables:
+    - symbol: EPS
+      name_he: רווח למניה
+    - symbol: Book Value Per Share
+      name_he: הון עצמי למניה
+  notes_he: אומדן שווי הוגן שמרני המשלב רווחיות והון עצמי.
+  relatedTool: graham
+
+- id: margin-of-safety
+  name_he: מרווח ביטחון
+  expression: "Margin of Safety = (Intrinsic Value - Price) / Intrinsic Value"
+  variables:
+    - symbol: Intrinsic Value
+      name_he: שווי פנימי
+    - symbol: Price
+      name_he: מחיר שוק
+  notes_he: הכרית שמגנה מפני טעויות בהערכת השווי ואי-ודאות עתידית.
+  relatedTool: margin-of-safety
+
+- id: dcf
+  name_he: היוון תזרימי מזומנים
+  expression: "Value = Sum( FCF_t / (1 + r)^t ) + Terminal Value / (1 + r)^n"
+  variables:
+    - symbol: FCF_t
+      name_he: תזרים מזומנים חופשי בשנה t
+    - symbol: r
+      name_he: שיעור היוון
+    - symbol: n
+      name_he: מספר שנות התחזית
+  notes_he: מתרגם תזרימים עתידיים לערך נוכחי אחד.
+  relatedTool: dcf
+
+- id: terminal-value
+  name_he: ערך טרמינלי
+  expression: "TV = FCF_n * (1 + g) / (r - g)"
+  variables:
+    - symbol: FCF_n
+      name_he: תזרים בשנה האחרונה של התחזית
+    - symbol: g
+      name_he: שיעור צמיחה טרמינלי
+    - symbol: r
+      name_he: שיעור היוון
+  notes_he: מייצג את כל הערך שמעבר לתקופת התחזית המפורשת.
+
+- id: earnings-yield
+  name_he: תשואת רווח
+  expression: "Earnings Yield = Earnings Per Share / Share Price"
+  variables:
+    - symbol: Earnings Per Share
+      name_he: רווח למניה
+    - symbol: Share Price
+      name_he: מחיר מניה
+  notes_he: ההופכי של מכפיל הרווח; מאפשר השוואה לתשואת אג"ח.
+
+- id: owner-earnings
+  name_he: רווחי בעלים
+  expression: "Owner Earnings = Net Income + D&A - CapEx - Change in Working Capital"
+  variables:
+    - symbol: Net Income
+      name_he: רווח נקי
+    - symbol: D&A
+      name_he: פחת והפחתות
+    - symbol: CapEx
+      name_he: השקעות הוניות
+  notes_he: מונח שטבע וורן באפט לתזרים האמיתי שנשאר לבעלי המניות.
+
+- id: bond-price
+  name_he: מחיר אג"ח
+  expression: "Price = Sum( Coupon / (1 + y)^t ) + Face Value / (1 + y)^n"
+  variables:
+    - symbol: Coupon
+      name_he: תשלום ריבית תקופתי
+    - symbol: y
+      name_he: תשואה לפדיון
+    - symbol: Face Value
+      name_he: ערך נקוב
+  notes_he: מחיר האג"ח נע הפוך מהתשואה לפדיון.
+
+- id: yield-to-maturity
+  name_he: תשואה לפדיון
+  expression: "YTM ≈ (Coupon + (Face Value - Price) / n) / ((Face Value + Price) / 2)"
+  variables:
+    - symbol: Coupon
+      name_he: תשלום ריבית שנתי
+    - symbol: n
+      name_he: שנים לפדיון
+    - symbol: Face Value
+      name_he: ערך נקוב
+    - symbol: Price
+      name_he: מחיר שוק
+  notes_he: קירוב לתשואה השנתית הכוללת אם האג"ח מוחזקת עד לפדיון.
