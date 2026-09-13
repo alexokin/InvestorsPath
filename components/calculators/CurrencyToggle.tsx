@@ -18,7 +18,7 @@ export function CurrencyToggle() {
       <div
         role="group"
         aria-label="בחירת מטבע תצוגה"
-        className="inline-flex rounded-lg border border-border bg-slate-50 p-0.5"
+        className="inline-flex rounded-lg border border-border bg-background p-0.5"
       >
         {OPTIONS.map((option) => {
           const meta = CURRENCIES[option];
@@ -30,7 +30,7 @@ export function CurrencyToggle() {
               aria-pressed={active}
               onClick={() => setCurrency(option)}
               className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                active ? "bg-primary text-white" : "text-muted hover:text-foreground"
+                active ? "bg-primary text-primary-foreground" : "text-muted hover:text-foreground"
               }`}
             >
               <span dir="ltr">{meta.symbol}</span> {meta.nameHe}

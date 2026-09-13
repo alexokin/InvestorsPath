@@ -4,8 +4,24 @@ import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { mdxComponents } from "@/components/mdx/MdxComponents";
+import { slugifyTerm } from "@/lib/content/glossary";
+import rehypeTerms, { type RehypeTerm, type RehypeTermsOptions } from "@/lib/content/rehype-terms";
+import type { Term } from "@/lib/content/schema";
 
-export async function renderLessonBody(source: string) {
+/**
+ * Compiles a lesson body to React. When `terms` (the lesson's frontmatter key
+ * terms) are passed, the first plain-text occurrence of each term in the body
+ * is wrapped in an inline <Term> tooltip linking to the glossary. Without
+ * `terms` the body renders exactly as before.
+ */
+export async function renderLessonBody(source: string, terms: Term[] = []) {
+  const rehypeTermList: RehypeTerm[] = terms.map((t) => ({
+    term: t.term,
+    en: t.en,
+    definition: t.definition,
+    slug: slugifyTerm(t.term),
+  }));
+
   const { content } = await compileMDX({
     source,
     components: mdxComponents,
@@ -18,6 +34,10 @@ export async function renderLessonBody(source: string) {
             rehypeAutolinkHeadings,
             { behavior: "wrap", properties: { className: ["heading-anchor"] } },
           ],
+          // Runs after autolink so heading text is already inside <a> and skipped.
+          ...(rehypeTermList.length > 0
+            ? [[rehypeTerms, { terms: rehypeTermList }] as [typeof rehypeTerms, RehypeTermsOptions]]
+            : []),
         ],
       },
     },

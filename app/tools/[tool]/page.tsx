@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { TOOLS, getToolMeta, CURRENCY_GUIDANCE_HE, type ToolId } from "@/lib/finance/tools";
+import { getToolRelatedLessons } from "@/lib/content/tool-lessons";
 import { CompoundInterestCalculator } from "@/components/calculators/CompoundInterestCalculator";
 import { DcfCalculator } from "@/components/calculators/DcfCalculator";
 import { GrahamCalculator } from "@/components/calculators/GrahamCalculator";
@@ -45,6 +46,7 @@ export default async function ToolPage({ params }: { params: Promise<{ tool: str
   const { tool } = await params;
   const meta = getToolMeta(tool);
   if (!meta) notFound();
+  const relatedLessons = getToolRelatedLessons(meta.id);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -80,11 +82,11 @@ export default async function ToolPage({ params }: { params: Promise<{ tool: str
         <CalculatorFor id={meta.id} />
       </div>
 
-      {meta.relatedLessons.length > 0 && (
+      {relatedLessons.length > 0 && (
         <div className="mt-8">
           <p className="mb-2 text-sm font-semibold text-foreground">שיעורים רלוונטיים</p>
           <ul className="space-y-2">
-            {meta.relatedLessons.map((lesson) => (
+            {relatedLessons.map((lesson) => (
               <li key={lesson.href}>
                 <Link
                   href={lesson.href}

@@ -19,7 +19,7 @@ function SingleVideo({ video }: { video: Video }) {
   const src = `https://www.youtube-nocookie.com/embed/${video.youtubeId}?autoplay=1&start=${start}`;
 
   return (
-    <div className="my-4 overflow-hidden rounded-lg border border-border bg-slate-50">
+    <div className="my-4 overflow-hidden rounded-lg border border-border bg-background">
       <div className="relative aspect-video w-full bg-black">
         {playing ? (
           <iframe
@@ -68,7 +68,7 @@ function SingleVideo({ video }: { video: Video }) {
                 setStart(toSeconds(ts.at));
                 setPlaying(true);
               }}
-              className="rounded-full border border-border bg-white px-2.5 py-1 text-xs text-muted hover:border-primary hover:text-primary"
+              className="rounded-full border border-border bg-surface px-2.5 py-1 text-xs text-muted hover:border-primary hover:text-primary"
             >
               <span dir="ltr" className="font-mono">
                 {ts.at}
@@ -102,7 +102,7 @@ export function YouTubeEmbed({ videos }: { videos: Video[] }) {
             onClick={() => setActive(i)}
             className={[
               "rounded-full px-3 py-1 text-xs font-medium",
-              i === active ? "bg-primary text-primary-foreground" : "bg-slate-100 text-muted",
+              i === active ? "bg-primary text-primary-foreground" : "bg-slate-100 text-muted dark:bg-slate-800",
             ].join(" ")}
           >
             סרטון {i + 1}

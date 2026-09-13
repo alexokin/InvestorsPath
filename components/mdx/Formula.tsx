@@ -4,15 +4,15 @@ export function Formula({ id }: { id: string }) {
   const formula = getFormula(id);
   if (!formula) {
     return (
-      <div className="my-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <div className="my-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
         נוסחה לא נמצאה: {id}
       </div>
     );
   }
   return (
-    <div className="my-4 rounded-lg border border-border bg-slate-50 p-4">
+    <div className="my-4 rounded-lg border border-border bg-background p-4">
       <p className="text-sm font-semibold text-foreground">{formula.name_he}</p>
-      <p dir="ltr" className="mt-2 rounded-md bg-white px-3 py-2 font-mono text-sm text-slate-800 border border-border">
+      <p dir="ltr" className="mt-2 rounded-md bg-surface px-3 py-2 font-mono text-sm text-foreground border border-border">
         {formula.expression}
       </p>
       <ul className="mt-3 space-y-1 text-sm text-muted">

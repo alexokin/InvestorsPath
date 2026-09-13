@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Clock, BarChart3, Calculator, ArrowLeft } from "lucide-react";
+import { Clock, BarChart3, Calculator, BookOpen } from "lucide-react";
 import {
   getChapters,
   getChapter,
@@ -18,6 +17,9 @@ import { Quiz } from "@/components/lesson/Quiz";
 import { LessonNav } from "@/components/lesson/LessonNav";
 import { MarkCompleteButton } from "@/components/lesson/MarkCompleteButton";
 import { LastVisitedTracker } from "@/components/lesson/LastVisitedTracker";
+import { BookmarkButton } from "@/components/lesson/BookmarkButton";
+import { LessonNotes } from "@/components/lesson/LessonNotes";
+import { RelatedLinks, type RelatedLinkItem } from "@/components/lesson/RelatedLinks";
 import { Badge } from "@/components/ui/Badge";
 import { getToolMeta } from "@/lib/finance/tools";
 
@@ -56,10 +58,21 @@ export default async function LessonPage({
   if (!chapter || !lesson) notFound();
 
   const [body, headings] = await Promise.all([
-    renderLessonBody(lesson.body),
+    renderLessonBody(lesson.body, lesson.terms),
     Promise.resolve(extractHeadings(lesson.body)),
   ]);
   const { prev, next } = getAdjacentLessons(chapterSlug, lessonSlug);
+
+  const relatedLessons: RelatedLinkItem[] = lesson.related.flatMap((key) => {
+    const [relChapter, relLesson] = key.split("/");
+    const target = relChapter && relLesson ? getLesson(relChapter, relLesson) : undefined;
+    return target ? [{ href: target.href, label: target.title, icon: BookOpen }] : [];
+  });
+
+  const relatedTools: RelatedLinkItem[] = lesson.tools.flatMap((toolId) => {
+    const tool = getToolMeta(toolId);
+    return tool ? [{ href: `/tools/${tool.id}/`, label: tool.name_he, icon: Calculator }] : [];
+  });
 
   return (
     <LessonLayout chapter={chapter} headings={headings}>
@@ -105,37 +118,22 @@ export default async function LessonPage({
         <CheatSheet cheatsheet={lesson.cheatsheet} />
       </section>
 
-      {lesson.tools.length > 0 && (
-        <section className="mt-8">
-          <h2 className="mb-3 text-lg font-bold text-foreground">כלים קשורים</h2>
-          <ul className="space-y-2">
-            {lesson.tools.map((toolId) => {
-              const tool = getToolMeta(toolId);
-              if (!tool) return null;
-              return (
-                <li key={toolId}>
-                  <Link
-                    href={`/tools/${tool.id}/`}
-                    className="flex items-center gap-2 rounded-lg border border-border bg-surface p-3 text-sm text-foreground transition-colors hover:border-primary hover:bg-accent"
-                  >
-                    <Calculator className="size-4 shrink-0 text-primary" />
-                    <span className="flex-1">{tool.name_he}</span>
-                    <ArrowLeft className="size-4 shrink-0 text-muted" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      )}
+      <RelatedLinks title="שיעורים קשורים" items={relatedLessons} className="mt-8" />
+
+      <RelatedLinks title="כלים קשורים" items={relatedTools} className="mt-8" />
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-bold text-foreground">בחן את עצמך</h2>
         <Quiz chapterSlug={chapterSlug} lessonSlug={lessonSlug} questions={lesson.quiz} />
       </section>
 
-      <div className="mt-8">
+      <div className="mt-8 flex flex-wrap items-center gap-2">
         <MarkCompleteButton chapterSlug={chapterSlug} lessonSlug={lessonSlug} />
+        <BookmarkButton chapterSlug={chapterSlug} lessonSlug={lessonSlug} />
+      </div>
+
+      <div className="mt-6">
+        <LessonNotes chapterSlug={chapterSlug} lessonSlug={lessonSlug} />
       </div>
 
       <LessonNav prev={prev} next={next} />

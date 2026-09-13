@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 type Tone = "default" | "primary" | "success" | "warning";
 
 const tones: Record<Tone, string> = {
-  default: "border-border bg-slate-50",
+  default: "border-border bg-background",
   primary: "border-primary/30 bg-accent",
-  success: "border-emerald-200 bg-emerald-50",
-  warning: "border-amber-200 bg-amber-50",
+  success: "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/40",
+  warning: "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40",
 };
 
 /**

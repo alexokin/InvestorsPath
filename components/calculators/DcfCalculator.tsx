@@ -118,7 +118,7 @@ export function DcfCalculator({
             />
           </>
         ) : (
-          <p className="text-sm text-red-700">
+          <p className="text-sm text-red-700 dark:text-red-300">
             שיעור ההיוון חייב להיות גבוה משיעור הצמיחה הטרמינלי כדי לקבל תוצאה תקפה.
           </p>
         )

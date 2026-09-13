@@ -8,6 +8,17 @@ import { LinkButton } from "@/components/ui/Button";
 
 export type ResumeLessonRef = { chapterSlug: string; slug: string; title: string };
 
+function AllProgressLink() {
+  return (
+    <Link
+      href="/progress/"
+      className="mt-3 inline-block text-xs font-medium text-primary hover:underline"
+    >
+      לכל ההתקדמות שלי ←
+    </Link>
+  );
+}
+
 export function ResumeCard({ lessons }: { lessons: ResumeLessonRef[] }) {
   const { hydrated, lastVisited, isComplete } = useProgress();
 
@@ -43,6 +54,7 @@ export function ResumeCard({ lessons }: { lessons: ResumeLessonRef[] }) {
         <ProgressBar percent={percent} />
         <span className="shrink-0 text-xs font-medium text-muted">{percent}% מהקורס הושלם</span>
       </div>
+      <AllProgressLink />
     </Card>
   );
 }

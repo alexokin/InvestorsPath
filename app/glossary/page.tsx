@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Layers } from "lucide-react";
+import { LinkButton } from "@/components/ui/Button";
 import { getGlossaryEntries, type GlossaryEntry } from "@/lib/content/glossary";
 
 export const metadata: Metadata = { title: "מילון מונחים" };
@@ -42,6 +44,10 @@ export default function GlossaryPage() {
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-bold text-foreground sm:text-3xl">מילון מונחים</h1>
       <p className="mt-2 text-muted">כל המונחים שנלמדים לאורך הקורס, לפי סדר אלפביתי.</p>
+      <LinkButton href="/flashcards/all/" variant="secondary" size="sm" className="mt-4">
+        <Layers className="size-4" />
+        תרגול כל המונחים בכרטיסיות
+      </LinkButton>
 
       {entries.length === 0 ? (
         <p className="mt-8 text-muted">המילון יתמלא ככל שיתווספו פרקים ושיעורים נוספים.</p>

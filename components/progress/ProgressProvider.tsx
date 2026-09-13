@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
+  clearProgress,
   defaultProgress,
   lessonKey,
   readProgress,
@@ -11,6 +12,8 @@ import {
 
 type ProgressContextValue = {
   hydrated: boolean;
+  /** Read-only snapshot of the full persisted state. */
+  state: Readonly<ProgressState>;
   isComplete: (chapterSlug: string, lessonSlug: string) => boolean;
   markComplete: (chapterSlug: string, lessonSlug: string, complete?: boolean) => void;
   setQuizResult: (
@@ -26,6 +29,16 @@ type ProgressContextValue = {
   chapterPercent: (chapterSlug: string, lessonSlugs: string[]) => number;
   lastVisited: ProgressState["lastVisited"];
   setLastVisited: (chapterSlug: string, lessonSlug: string) => void;
+  isBookmarked: (chapterSlug: string, lessonSlug: string) => boolean;
+  toggleBookmark: (chapterSlug: string, lessonSlug: string) => void;
+  getNote: (chapterSlug: string, lessonSlug: string) => string;
+  /** Empty / whitespace-only text removes the note. */
+  setNote: (chapterSlug: string, lessonSlug: string, text: string) => void;
+  setCertificateName: (name: string) => void;
+  /** Replace the whole state (e.g. after import). Missing fields are defaulted. */
+  replaceState: (next: ProgressState) => void;
+  /** Wipe all progress from memory and localStorage. */
+  resetProgress: () => void;
 };
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -51,6 +64,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const value = useMemo<ProgressContextValue>(
     () => ({
       hydrated,
+      state,
       isComplete: (chapterSlug, lessonSlug) =>
         Boolean(state.completedLessons[lessonKey(chapterSlug, lessonSlug)]),
       markComplete: (chapterSlug, lessonSlug, complete = true) =>
@@ -84,6 +98,38 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           ...prev,
           lastVisited: { chapterSlug, lessonSlug, at: Date.now() },
         })),
+      isBookmarked: (chapterSlug, lessonSlug) =>
+        Boolean(state.bookmarks[lessonKey(chapterSlug, lessonSlug)]),
+      toggleBookmark: (chapterSlug, lessonSlug) =>
+        update((prev) => {
+          const key = lessonKey(chapterSlug, lessonSlug);
+          const bookmarks = { ...prev.bookmarks };
+          if (bookmarks[key]) delete bookmarks[key];
+          else bookmarks[key] = true;
+          return { ...prev, bookmarks };
+        }),
+      getNote: (chapterSlug, lessonSlug) => state.notes[lessonKey(chapterSlug, lessonSlug)] ?? "",
+      setNote: (chapterSlug, lessonSlug, text) =>
+        update((prev) => {
+          const key = lessonKey(chapterSlug, lessonSlug);
+          const notes = { ...prev.notes };
+          if (text.trim().length === 0) delete notes[key];
+          else notes[key] = text;
+          return { ...prev, notes };
+        }),
+      setCertificateName: (name) =>
+        update((prev) => {
+          const trimmed = name.trim();
+          const next = { ...prev };
+          if (trimmed) next.certificateName = trimmed;
+          else delete next.certificateName;
+          return next;
+        }),
+      replaceState: (next) => update(() => ({ ...defaultProgress(), ...next, version: 2 })),
+      resetProgress: () => {
+        clearProgress();
+        setState(defaultProgress());
+      },
     }),
     [state, hydrated]
   );

@@ -6,18 +6,14 @@ import {
   lessonFrontmatterSchema,
 } from "../lib/content/schema";
 import { getFormulas } from "../lib/content/formulas";
+import { TOOL_IDS } from "../lib/finance/tools";
 
 const ROOT = process.cwd();
 const CONTENT_ROOT = path.join(ROOT, "content", "chapters");
 const ONLINE = process.argv.includes("--online");
 
-const KNOWN_TOOL_IDS = new Set([
-  "compound",
-  "dcf",
-  "graham",
-  "multiples",
-  "margin-of-safety",
-]);
+// Single source of truth for tool ids lives in lib/finance/tools.ts.
+const KNOWN_TOOL_IDS = new Set<string>(TOOL_IDS);
 
 // Static routes that exist regardless of content.
 const STATIC_ROUTES = new Set([
@@ -108,6 +104,12 @@ async function checkYoutubeId(id: string): Promise<boolean> {
 }
 
 async function main() {
+  if (!process.env.NEXT_PUBLIC_SITE_URL) {
+    warn(
+      "NEXT_PUBLIC_SITE_URL is not set - sitemap/robots/Open Graph URLs will use the https://example.com placeholder (see .env.example)."
+    );
+  }
+
   if (!fs.existsSync(CONTENT_ROOT)) {
     fail(`Content root not found: ${CONTENT_ROOT}`);
     report();

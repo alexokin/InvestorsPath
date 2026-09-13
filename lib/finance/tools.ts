@@ -1,8 +1,12 @@
 /**
  * Static metadata for the five calculator tools under /tools/[tool]/.
- * Kept separate from the React components so both the index page and the
- * per-tool page (and the content validator's KNOWN_TOOL_IDS) can share a
- * single source of truth for the ids.
+ * Kept separate from the React components so the index page, the per-tool
+ * page, the search index and the content validator (run via tsx, outside
+ * Next) can share a single source of truth for the ids. Keep this file free
+ * of React and "server-only" imports for that reason.
+ *
+ * Lessons that use a tool are resolved from lesson frontmatter (`tools:`)
+ * via lib/content/tool-lessons.ts rather than being hardcoded here.
  */
 
 export type ToolId = "compound" | "dcf" | "graham" | "multiples" | "margin-of-safety";
@@ -13,7 +17,6 @@ export interface ToolMeta {
   tagline_he: string;
   method_he: string;
   limits_he: string;
-  relatedLessons: { label: string; href: string }[];
 }
 
 export const TOOLS: ToolMeta[] = [
@@ -27,7 +30,6 @@ export const TOOLS: ToolMeta[] = [
     limits_he:
       "החישוב מניח תשואה קבועה לאורך כל התקופה, ולא כולל מיסוי, דמי ניהול או אינפלציה. " +
       "תשואות אמיתיות בשוק ההון משתנות משנה לשנה ואינן ליניאריות.",
-    relatedLessons: [{ label: "ריבית דריבית: הכוח השמיני", href: "/lessons/before-you-start/compound-interest/" }],
   },
   {
     id: "dcf",
@@ -40,9 +42,6 @@ export const TOOLS: ToolMeta[] = [
     limits_he:
       "מודל DCF רגיש מאוד להנחות: שינוי קטן בשיעור ההיוון או בצמיחה הטרמינלית יכול לשנות " +
       "את השווי המחושב באופן דרמטי. יש להשתמש בו כמסגרת חשיבה ולא כתשובה מדויקת.",
-    relatedLessons: [
-      { label: "ריבית דריבית: הכוח השמיני", href: "/lessons/before-you-start/compound-interest/" },
-    ],
   },
   {
     id: "graham",
@@ -56,9 +55,6 @@ export const TOOLS: ToolMeta[] = [
       "שתי הנוסחאות פותחו לפני עשרות שנים בסביבת ריבית שונה, ומתאימות בעיקר לחברות " +
       "רווחיות ויציבות עם הון עצמי משמעותי — ופחות לחברות טכנולוגיה, חברות הפסדיות או " +
       "חברות עם נכסים בלתי מוחשיים דומיננטיים.",
-    relatedLessons: [
-      { label: "ריבית דריבית: הכוח השמיני", href: "/lessons/before-you-start/compound-interest/" },
-    ],
   },
   {
     id: "multiples",
@@ -70,9 +66,6 @@ export const TOOLS: ToolMeta[] = [
     limits_he:
       "מכפילים משווים חברות במנותק מהבדלי צמיחה, סיכון, מבנה הון ואיכות רווחים. מכפיל " +
       "נמוך אינו בהכרח \"זול\" — ייתכן שהשוק מתמחר כך בגלל סיכון אמיתי.",
-    relatedLessons: [
-      { label: "ריבית דריבית: הכוח השמיני", href: "/lessons/before-you-start/compound-interest/" },
-    ],
   },
   {
     id: "margin-of-safety",
@@ -84,11 +77,14 @@ export const TOOLS: ToolMeta[] = [
     limits_he:
       "מרווח הביטחון טוב בדיוק כמו אומדן השווי הפנימי שעליו הוא מבוסס — הוא לא מפצה על " +
       "טעות שיטתית בהערכת השווי עצמה, רק על אי-ודאות סבירה סביבה.",
-    relatedLessons: [
-      { label: "ריבית דריבית: הכוח השמיני", href: "/lessons/before-you-start/compound-interest/" },
-    ],
   },
 ];
+
+export const TOOL_IDS: ToolId[] = TOOLS.map((t) => t.id);
+
+export function isToolId(id: string): id is ToolId {
+  return (TOOL_IDS as string[]).includes(id);
+}
 
 export function getToolMeta(id: string): ToolMeta | undefined {
   return TOOLS.find((t) => t.id === id);

@@ -55,9 +55,9 @@ export function Quiz({
                       "flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-start text-sm transition-colors",
                       submitted
                         ? isCorrect
-                          ? "border-emerald-300 bg-emerald-50"
+                          ? "border-emerald-300 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/40"
                           : isSelected
-                            ? "border-red-300 bg-red-50"
+                            ? "border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950/40"
                             : "border-border"
                         : isSelected
                           ? "border-primary bg-accent"
@@ -67,9 +67,9 @@ export function Quiz({
                     <span>{option}</span>
                     {showState &&
                       (isCorrect ? (
-                        <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+                        <CheckCircle2 className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                       ) : isSelected ? (
-                        <XCircle className="size-4 shrink-0 text-red-600" />
+                        <XCircle className="size-4 shrink-0 text-red-600 dark:text-red-400" />
                       ) : null)}
                   </button>
                 );

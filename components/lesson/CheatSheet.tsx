@@ -13,7 +13,7 @@ export function CheatSheet({
   return (
     <div
       className={[
-        "cheat-card rounded-xl border border-border bg-slate-50 p-5",
+        "cheat-card rounded-xl border border-border bg-background p-5",
         variant === "print" ? "print:border-slate-300" : "",
       ].join(" ")}
     >
@@ -63,7 +63,7 @@ export function CheatSheet({
           <ul className="space-y-1.5 text-sm">
             {cheatsheet.checklist.map((item, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="mt-1 size-3.5 shrink-0 rounded border border-slate-400" />
+                <span className="mt-1 size-3.5 shrink-0 rounded border border-slate-400 dark:border-slate-500" />
                 <span>{item}</span>
               </li>
             ))}

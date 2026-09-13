@@ -46,7 +46,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/40 p-4 pt-24"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/40 p-4 pt-24 dark:bg-black/60"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}

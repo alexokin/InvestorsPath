@@ -58,7 +58,7 @@ function CompanyForm({
   const moneySuffixMillion = `${moneySuffix} מיליון`;
 
   return (
-    <div className="rounded-lg border border-border bg-slate-50 p-4">
+    <div className="rounded-lg border border-border bg-background p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
         <input
           value={company.name ?? `חברה ${index + 1}`}
@@ -69,7 +69,7 @@ function CompanyForm({
           <button
             type="button"
             onClick={onRemove}
-            className="shrink-0 rounded-md border border-border px-2 py-1 text-xs text-muted hover:text-red-700"
+            className="shrink-0 rounded-md border border-border px-2 py-1 text-xs text-muted hover:text-red-700 dark:hover:text-red-300"
           >
             הסרה
           </button>
@@ -220,9 +220,9 @@ export function MultiplesComparison({
                         <span className="text-xs text-muted">—</span>
                       ) : (
                         <span className="flex items-center gap-2">
-                          <span className="h-2 w-16 overflow-hidden rounded-full bg-slate-200">
+                          <span className="h-2 w-16 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
                             <span
-                              className={`block h-full rounded-full ${v === best ? "bg-primary" : "bg-slate-400"}`}
+                              className={`block h-full rounded-full ${v === best ? "bg-primary" : "bg-slate-400 dark:bg-slate-500"}`}
                               style={{ width: `${Math.max(4, Math.min(100, (v / (max || 1)) * 100))}%` }}
                             />
                           </span>

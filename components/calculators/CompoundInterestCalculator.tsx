@@ -36,8 +36,8 @@ function GrowthChart({ rows }: { rows: { year: number; endBalance: number }[] })
       role="img"
       aria-label="גרף צמיחת הסכום לאורך זמן"
     >
-      <path d={areaPath} fill="var(--color-accent, #eff6ff)" opacity={0.7} />
-      <path d={linePath} fill="none" stroke="var(--color-primary, #2563eb)" strokeWidth={2} />
+      <path d={areaPath} fill="var(--accent)" opacity={0.7} />
+      <path d={linePath} fill="none" stroke="var(--primary)" strokeWidth={2} />
     </svg>
   );
 }

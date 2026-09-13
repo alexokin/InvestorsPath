@@ -11,7 +11,7 @@ export function Ticker({ children }: { children: string }) {
   return (
     <span
       dir="ltr"
-      className="inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] font-semibold text-slate-700"
+      className="inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[0.85em] font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200"
     >
       {children}
     </span>

@@ -12,6 +12,9 @@ const STATIC_ROUTES: { path: string; priority: number }[] = [
   { path: "/glossary/", priority: 0.7 },
   { path: "/cheatsheets/", priority: 0.7 },
   { path: "/tools/", priority: 0.7 },
+  { path: "/flashcards/", priority: 0.7 },
+  { path: "/flashcards/all/", priority: 0.5 },
+  { path: "/progress/", priority: 0.5 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -32,6 +35,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
     entries.push({
       url: `${SITE_URL}/chapters/${chapter.slug}/cheatsheet/`,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    });
+    entries.push({
+      url: `${SITE_URL}/flashcards/${chapter.slug}/`,
       changeFrequency: "monthly",
       priority: 0.4,
     });

@@ -6,7 +6,7 @@ export function ProgressBar({ percent }: { percent: number }) {
       aria-valuenow={clamped}
       aria-valuemin={0}
       aria-valuemax={100}
-      className="h-2 w-full overflow-hidden rounded-full bg-slate-100"
+      className="h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
     >
       <div
         className="h-full rounded-full bg-primary transition-all"

@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 const links = [
   { href: "/curriculum/", label: "תוכנית הלימודים" },
   { href: "/glossary/", label: "מילון מונחים" },
+  { href: "/flashcards/", label: "כרטיסיות" },
   { href: "/cheatsheets/", label: "דפי סיכום" },
   { href: "/tools/", label: "כלים" },
+  { href: "/progress/", label: "ההתקדמות שלי" },
 ];
 
 export function Header() {
@@ -31,7 +34,10 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <SearchTrigger className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm text-muted transition-colors hover:border-primary hover:text-primary" />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <SearchTrigger className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm text-muted transition-colors hover:border-primary hover:text-primary" />
+        </div>
       </div>
     </header>
   );

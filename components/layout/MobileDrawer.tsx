@@ -33,7 +33,7 @@ export function MobileDrawer({ children }: { children: ReactNode }) {
             </div>
             {children}
           </div>
-          <div className="flex-1 bg-slate-900/40" onClick={() => setOpen(false)} />
+          <div className="flex-1 bg-slate-900/40 dark:bg-black/60" onClick={() => setOpen(false)} />
         </div>
       )}
     </div>

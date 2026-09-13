@@ -5,8 +5,21 @@ Hebrew, RTL, statically-exported Next.js learning platform for value investing.
 ## Development
 
 ```bash
+cp .env.example .env.local   # set NEXT_PUBLIC_SITE_URL to the production domain
 npm run dev
 ```
+
+## Features
+
+- 12 chapters / 69 lessons (`content/chapters/`), each with videos, key terms, cheat sheet, quiz, related lessons and tools.
+- Calculators under `/tools/` (also embedded inside the relevant lessons via MDX).
+- Search (Ctrl/Cmd+K), glossary with in-lesson term tooltips, printable cheat sheets.
+- Flashcards (`/flashcards/`, `/flashcards/<chapter>/`, `/flashcards/all/`) with a Leitner scheduler.
+- Progress dashboard (`/progress/`): completion, quiz scores, bookmarks, notes, JSON export/import, completion certificate.
+- Light / dark / system theme.
+
+All learner state lives in `localStorage`: `vip:progress:v2` (progress, bookmarks, notes; `v1` is migrated automatically),
+`vip:flashcards:v1`, `vip:theme:v1`, `vip:currency:v1`.
 
 ## Verification
 

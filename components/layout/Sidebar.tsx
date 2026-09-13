@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckCircle2, Circle } from "lucide-react";
+import { Bookmark, CheckCircle2, Circle } from "lucide-react";
 import { useProgress } from "@/components/progress/ProgressProvider";
 import type { Chapter } from "@/lib/content/schema";
 
 export function Sidebar({ chapter }: { chapter: Chapter }) {
   const pathname = usePathname();
-  const { isComplete, hydrated } = useProgress();
+  const { isComplete, isBookmarked, hydrated } = useProgress();
 
   return (
     <nav aria-label="שיעורי הפרק" className="space-y-1">
@@ -19,6 +19,7 @@ export function Sidebar({ chapter }: { chapter: Chapter }) {
         const href = `/lessons/${chapter.slug}/${lesson.slug}/`;
         const active = pathname === href;
         const done = hydrated && isComplete(chapter.slug, lesson.slug);
+        const marked = hydrated && isBookmarked(chapter.slug, lesson.slug);
         return (
           <Link
             key={lesson.slug}
@@ -31,9 +32,10 @@ export function Sidebar({ chapter }: { chapter: Chapter }) {
             {done ? (
               <CheckCircle2 className="size-4 shrink-0 text-primary" />
             ) : (
-              <Circle className="size-4 shrink-0 text-slate-300" />
+              <Circle className="size-4 shrink-0 text-slate-300 dark:text-slate-600" />
             )}
-            <span>{lesson.title}</span>
+            <span className="flex-1">{lesson.title}</span>
+            {marked && <Bookmark aria-label="בסימניות" className="size-3.5 shrink-0 fill-current text-primary" />}
           </Link>
         );
       })}
