@@ -272,7 +272,7 @@ export function FlashcardDeck({ cards, deckId, title }: Props) {
         aria-valuenow={gradedCount}
         aria-valuemin={0}
         aria-valuemax={total}
-        className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100"
+        className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
       >
         <div
           className="h-full rounded-full bg-primary transition-all motion-reduce:transition-none"
@@ -355,7 +355,7 @@ export function FlashcardDeck({ cards, deckId, title }: Props) {
           <Button
             variant="secondary"
             onClick={() => gradeCurrent(false)}
-            className="border-red-200 text-red-700 hover:bg-red-50"
+            className="border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/40"
           >
             <X className="size-4" />
             לא ידעתי
@@ -399,10 +399,10 @@ function SummaryStat({
   tone: "default" | "primary" | "success" | "warning";
 }) {
   const toneClass = {
-    default: "bg-slate-50 text-slate-700",
+    default: "bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-200",
     primary: "bg-accent text-primary",
-    success: "bg-emerald-50 text-emerald-700",
-    warning: "bg-amber-50 text-amber-700",
+    success: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300",
+    warning: "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300",
   }[tone];
   return (
     <div className={`rounded-lg p-3 ${toneClass}`}>

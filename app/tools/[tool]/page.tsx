@@ -72,15 +72,15 @@ export default async function ToolPage({ params }: { params: Promise<{ tool: str
       <p className="mt-2 text-muted">{meta.tagline_he}</p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-border bg-slate-50 p-4">
+        <div className="rounded-lg border border-border bg-background p-4">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">השיטה</p>
           <p className="text-sm leading-relaxed text-foreground">{meta.method_he}</p>
         </div>
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/40">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-200">
             מגבלות
           </p>
-          <p className="text-sm leading-relaxed text-amber-900">{meta.limits_he}</p>
+          <p className="text-sm leading-relaxed text-amber-900 dark:text-amber-200">{meta.limits_he}</p>
         </div>
         <div className="rounded-lg border border-border bg-accent p-4 sm:col-span-2">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-primary">

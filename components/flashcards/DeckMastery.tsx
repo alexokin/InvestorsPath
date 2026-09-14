@@ -29,7 +29,7 @@ export function DeckMastery({ slugs }: { slugs: string[] }) {
         aria-valuenow={value}
         aria-valuemin={0}
         aria-valuemax={100}
-        className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100"
+        className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800"
       >
         <div
           className="h-full rounded-full bg-primary transition-all motion-reduce:transition-none"

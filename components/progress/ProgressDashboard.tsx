@@ -344,7 +344,7 @@ export function ProgressDashboard({ chapters }: { chapters: DashboardChapter[] }
           </Button>
         </div>
         {importError && (
-          <p role="alert" className="mt-3 text-sm text-red-700">
+          <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-300">
             {importError}
           </p>
         )}
@@ -435,11 +435,11 @@ function DashboardSkeleton() {
   return (
     <div className="space-y-8" aria-busy="true" aria-label="טוען את ההתקדמות">
       <Card>
-        <div className="h-5 w-32 animate-pulse rounded bg-slate-100" />
-        <div className="mt-4 h-2 w-full animate-pulse rounded-full bg-slate-100" />
+        <div className="h-5 w-32 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
+        <div className="mt-4 h-2 w-full animate-pulse rounded-full bg-slate-100 dark:bg-slate-800" />
         <div className="mt-4 grid grid-cols-3 gap-4">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-10 animate-pulse rounded bg-slate-100" />
+            <div key={i} className="h-10 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
           ))}
         </div>
       </Card>
