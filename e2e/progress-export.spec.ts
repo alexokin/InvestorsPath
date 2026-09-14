@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { p } from "./helpers";
 
 test("progress export downloads a v2 JSON file", async ({ page }) => {
-  await page.goto("/progress/");
+  await page.goto(p("/progress/"));
   await expect(page.getByRole("heading", { name: "ההתקדמות שלי" })).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");

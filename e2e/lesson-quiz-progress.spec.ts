@@ -1,23 +1,24 @@
 import { test, expect } from "@playwright/test";
+import { p, rx } from "./helpers";
 
 /**
  * Home -> first chapter -> first lesson -> quiz -> mark complete -> reload
  * and confirm the sidebar tick + localStorage persistence (vip:progress:v2).
  */
 test("lesson flow: quiz, mark complete, persists across reload", async ({ page }) => {
-  await page.goto("/");
+  await page.goto(p("/"));
 
   // First chapter card under "פרקי הקורס".
-  const chapterCards = page.locator('a[href^="/chapters/"]');
+  const chapterCards = page.locator(`a[href^="${p("/chapters/")}"]`);
   await expect(chapterCards.first()).toBeVisible();
   await chapterCards.first().click();
-  await expect(page).toHaveURL(/\/chapters\/[^/]+\/$/);
+  await expect(page).toHaveURL(rx("/chapters/[^/]+/$"));
 
   // First lesson in the chapter's lesson list.
-  const lessonLinks = page.locator('a[href^="/lessons/"]');
+  const lessonLinks = page.locator(`a[href^="${p("/lessons/")}"]`);
   await expect(lessonLinks.first()).toBeVisible();
   await lessonLinks.first().click();
-  await expect(page).toHaveURL(/\/lessons\/[^/]+\/[^/]+\/$/);
+  await expect(page).toHaveURL(rx("/lessons/[^/]+/[^/]+/$"));
 
   // h1 renders.
   await expect(page.locator("h1")).toBeVisible();

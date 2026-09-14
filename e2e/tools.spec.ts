@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { test, expect } from "@playwright/test";
+import { p } from "./helpers";
 
 /**
  * Read tool ids straight from lib/finance/tools.ts (source of truth) rather
@@ -19,9 +20,9 @@ function readToolIds(): string[] {
 const toolIds = readToolIds();
 
 test("tools index links to every calculator", async ({ page }) => {
-  await page.goto("/tools/");
+  await page.goto(p("/tools/"));
   for (const id of toolIds) {
-    await expect(page.locator(`a[href="/tools/${id}/"]`)).toBeVisible();
+    await expect(page.locator(`a[href="${p(`/tools/${id}/`)}"]`)).toBeVisible();
   }
 });
 
@@ -38,7 +39,7 @@ for (const id of toolIds) {
     });
     page.on("pageerror", (err) => consoleErrors.push(String(err)));
 
-    await page.goto(`/tools/${id}/`);
+    await page.goto(p(`/tools/${id}/`));
     await expect(page.locator("h1")).toBeVisible();
 
     const numberInputs = page.locator('input[type="number"]');

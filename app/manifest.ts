@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { withBasePath } from "@/lib/base-path";
 
 // Static export has no server to compute this per-request; force-static
 // makes `next build` emit the manifest as a plain static file in out/
@@ -12,36 +13,37 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "המדריך המלא להשקעות ערך, בעברית.",
     lang: "he",
     dir: "rtl",
-    start_url: "/",
+    start_url: withBasePath("/"),
+    scope: withBasePath("/"),
     display: "standalone",
     background_color: "#f8fafc",
     theme_color: "#2563eb",
     icons: [
       {
-        src: "/icons/icon.svg",
+        src: withBasePath("/icons/icon.svg"),
         sizes: "any",
         type: "image/svg+xml",
       },
       {
-        src: "/icons/icon-192.png",
+        src: withBasePath("/icons/icon-192.png"),
         sizes: "192x192",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-192.png",
+        src: withBasePath("/icons/icon-192.png"),
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/icons/icon-512.png",
+        src: withBasePath("/icons/icon-512.png"),
         sizes: "512x512",
         type: "image/png",
         purpose: "any",
       },
       {
-        src: "/icons/icon-512.png",
+        src: withBasePath("/icons/icon-512.png"),
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

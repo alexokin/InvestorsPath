@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
+import { p } from "./helpers";
 
 test("theme toggle switches to dark and persists across reload", async ({ page }) => {
-  await page.goto("/");
+  await page.goto(p("/"));
 
   const html = page.locator("html");
   const toggle = page.getByRole("button", { name: /מצב (בהיר|כהה|לפי המערכת)/ });

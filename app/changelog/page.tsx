@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getChangelogEntries } from "@/lib/content/changelog";
+import { withBasePath } from "@/lib/base-path";
 
 export const metadata: Metadata = {
   title: "מה חדש",
@@ -28,7 +29,7 @@ export default function ChangelogPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-foreground">מה חדש</h1>
         <a
-          href="/feed.xml"
+          href={withBasePath("/feed.xml")}
           className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:border-primary hover:text-primary"
         >
           RSS

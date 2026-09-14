@@ -1,14 +1,6 @@
 {
   "ci": {
     "collect": {
-      "staticDistDir": "out",
-      "url": [
-        "/",
-        "/curriculum/",
-        "/lessons/before-you-start/what-is-value-investing/",
-        "/tools/dcf/",
-        "/progress/"
-      ],
       "numberOfRuns": 1
     },
     "assert": {

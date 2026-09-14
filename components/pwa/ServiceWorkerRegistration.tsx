@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { withBasePath } from "@/lib/base-path";
 
 /**
  * Registers /sw.js after the page has loaded, production builds only.
@@ -13,9 +14,11 @@ export function ServiceWorkerRegistration() {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
     const register = () => {
-      navigator.serviceWorker.register("/sw.js").catch((error) => {
-        console.warn("[sw] registration failed", error);
-      });
+      navigator.serviceWorker
+        .register(withBasePath("/sw.js"), { scope: withBasePath("/") })
+        .catch((error) => {
+          console.warn("[sw] registration failed", error);
+        });
     };
 
     if (document.readyState === "complete") {

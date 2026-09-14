@@ -50,10 +50,28 @@ PW_CHANNEL=chrome npm run e2e                  # use the installed Chrome/Edge (
 Windows where the client router's segment prefetch files are written into nested folders and 404 at runtime; on
 Linux/macOS it is a no-op.
 
+`npm run serve:out` (`scripts/serve-out.mjs`) serves `./out` on port 4173 (`PORT` to override); it mounts the export
+at `NEXT_PUBLIC_BASE_PATH` (empty by default), matching whatever base path the build in `./out` was made with. This
+is what `playwright test`'s `webServer` runs automatically, so `npm run e2e` normally doesn't need it directly.
+
+To test the exact configuration that deploys to GitHub Pages (built and served under `/InvestorsPath`, matching
+`deploy-pages.yml`), build and run e2e with the same base path:
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/InvestorsPath npm run build
+NEXT_PUBLIC_BASE_PATH=/InvestorsPath npm run e2e
+```
+
+`e2e/helpers.ts` exports `BASE_PATH`, `p()` and `rx()`, which every spec uses to build URLs/selectors relative to
+whatever base path the current run is testing.
+
 ## CI and deploy
 
 `.github/workflows/ci.yml` runs validate / typecheck / lint / unit tests / build / e2e and a Lighthouse CI pass
-(`lighthouserc.json`; accessibility, best-practices and SEO regressions fail, performance warns).
+(`lighthouserc.json`; accessibility, best-practices and SEO regressions fail, performance warns). The build, e2e and
+Lighthouse steps all set `NEXT_PUBLIC_BASE_PATH` from the `BASE_PATH` repo variable, so CI tests the same prefixed
+build that `deploy-pages.yml` ships; Lighthouse runs against `npm run serve:out` (rather than `staticDistDir`, which
+can't mount a base path) so its URLs can include the prefix.
 `.github/workflows/deploy-pages.yml` deploys `./out` to GitHub Pages after CI succeeds on `main`; set the `SITE_URL`
 repository variable. Project-pages sites (`user.github.io/repo`) need `basePath`/`assetPrefix` in `next.config.ts`;
 see the comment at the top of that workflow.
