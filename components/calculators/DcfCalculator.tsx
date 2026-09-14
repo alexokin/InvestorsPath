@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { calculateDcf, dcfSensitivityGrid } from "@/lib/finance/dcf";
 import { formatPercent } from "@/lib/format";
 import { formatMoney, currencySymbol, type Currency } from "@/lib/currency";
@@ -8,9 +9,16 @@ import { useCurrency } from "@/components/calculators/CurrencyProvider";
 import { CalculatorShell } from "@/components/calculators/CalculatorShell";
 import { NumberField } from "@/components/calculators/NumberField";
 import { ResultCard } from "@/components/calculators/ResultCard";
+import { useUrlSyncedState, type UrlStateSchema } from "@/lib/calculators/url-state";
 
 const DISCOUNT_STEPS = [-0.02, -0.01, 0, 0.01, 0.02];
 const TERMINAL_STEPS = [-0.01, -0.005, 0, 0.005, 0.01];
+
+/**
+ * URL query keys (only written when `syncUrl` is on — see below):
+ *   fcf0 = defaultFcf0, g = growthRate, n = years, r = discountRate,
+ *   tg = terminalGrowthRate, nd = netDebt, sh = shares
+ */
 
 export function DcfCalculator({
   defaultFcf0 = 100,
@@ -21,6 +29,7 @@ export function DcfCalculator({
   defaultNetDebt = 0,
   defaultShares = 100,
   defaultCurrency,
+  syncUrl,
 }: {
   defaultFcf0?: number;
   defaultGrowthRate?: number;
@@ -30,14 +39,52 @@ export function DcfCalculator({
   defaultNetDebt?: number;
   defaultShares?: number;
   defaultCurrency?: Currency;
+  /**
+   * Whether numeric inputs are synced to the URL query string. Defaults to
+   * `true` only when this instance is rendered on a `/tools/` route
+   * (detected via `usePathname`); embedded lesson instances default to
+   * `false`. Pass explicitly to override either way.
+   */
+  syncUrl?: boolean;
 }) {
-  const [fcf0, setFcf0] = useState(defaultFcf0);
-  const [growthRate, setGrowthRate] = useState(defaultGrowthRate);
-  const [years, setYears] = useState(defaultYears);
-  const [discountRate, setDiscountRate] = useState(defaultDiscountRate);
-  const [terminalGrowthRate, setTerminalGrowthRate] = useState(defaultTerminalGrowthRate);
-  const [netDebt, setNetDebt] = useState(defaultNetDebt);
-  const [shares, setShares] = useState(defaultShares);
+  const pathname = usePathname();
+  const effectiveSyncUrl = syncUrl ?? (pathname?.startsWith("/tools/") ?? false);
+
+  const schema: UrlStateSchema = useMemo(
+    () => ({
+      fcf0: { default: defaultFcf0 },
+      g: { default: defaultGrowthRate },
+      n: { default: defaultYears, min: 1, max: 15 },
+      r: { default: defaultDiscountRate },
+      tg: { default: defaultTerminalGrowthRate },
+      nd: { default: defaultNetDebt },
+      sh: { default: defaultShares, min: 1 },
+    }),
+    [
+      defaultFcf0,
+      defaultGrowthRate,
+      defaultYears,
+      defaultDiscountRate,
+      defaultTerminalGrowthRate,
+      defaultNetDebt,
+      defaultShares,
+    ]
+  );
+  const [urlState, setUrlState] = useUrlSyncedState(schema, { enabled: effectiveSyncUrl });
+  const fcf0 = urlState.fcf0;
+  const growthRate = urlState.g;
+  const years = urlState.n;
+  const discountRate = urlState.r;
+  const terminalGrowthRate = urlState.tg;
+  const netDebt = urlState.nd;
+  const shares = urlState.sh;
+  const setFcf0 = (v: number) => setUrlState((prev) => ({ ...prev, fcf0: v }));
+  const setGrowthRate = (v: number) => setUrlState((prev) => ({ ...prev, g: v }));
+  const setYears = (v: number) => setUrlState((prev) => ({ ...prev, n: v }));
+  const setDiscountRate = (v: number) => setUrlState((prev) => ({ ...prev, r: v }));
+  const setTerminalGrowthRate = (v: number) => setUrlState((prev) => ({ ...prev, tg: v }));
+  const setNetDebt = (v: number) => setUrlState((prev) => ({ ...prev, nd: v }));
+  const setShares = (v: number) => setUrlState((prev) => ({ ...prev, sh: v }));
   const { currency, seedDefaultCurrency } = useCurrency();
 
   useEffect(() => {
@@ -74,6 +121,7 @@ export function DcfCalculator({
 
   return (
     <CalculatorShell
+      shareable={effectiveSyncUrl}
       inputs={
         <>
           <NumberField

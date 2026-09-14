@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   clearProgress,
   defaultProgress,
@@ -46,16 +46,24 @@ const ProgressContext = createContext<ProgressContextValue | null>(null);
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ProgressState>(defaultProgress());
   const [hydrated, setHydrated] = useState(false);
+  // React runs child effects before parent effects, so a child such as
+  // LastVisitedTracker can call update() before this provider has read
+  // localStorage. Track hydration in a ref (state is stale inside the
+  // setState updater) so early updates merge into the persisted state
+  // instead of overwriting it with defaults.
+  const hydratedRef = useRef(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage on mount
     setState(readProgress());
+    hydratedRef.current = true;
     setHydrated(true);
   }, []);
 
   const update = (updater: (prev: ProgressState) => ProgressState) => {
     setState((prev) => {
-      const next = updater(prev);
+      const base = hydratedRef.current ? prev : readProgress();
+      const next = updater(base);
       writeProgress(next);
       return next;
     });

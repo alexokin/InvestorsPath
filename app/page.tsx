@@ -1,9 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Clock } from "lucide-react";
 import { getAllLessons, getChapters } from "@/lib/content/loader";
 import { ResumeCard } from "@/components/progress/ResumeCard";
 import { ChapterProgress } from "@/components/progress/ChapterProgress";
 import { LinkButton } from "@/components/ui/Button";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { courseJsonLd } from "@/lib/seo/jsonld";
+
+const SITE_TITLE = "מסלול המשקיע — המדריך המלא להשקעות ערך, בעברית";
+const SITE_DESCRIPTION = "המדריך המלא להשקעות ערך, בעברית";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    type: "website",
+    locale: "he_IL",
+  },
+  twitter: { card: "summary_large_image" },
+};
 
 export default function HomePage() {
   const chapters = getChapters();
@@ -15,6 +32,7 @@ export default function HomePage() {
 
   return (
     <div>
+      <JsonLd data={courseJsonLd(chapters)} />
       <section className="border-b border-border bg-gradient-to-b from-accent to-background">
         <div className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6">
           <h1 className="mx-auto max-w-2xl text-3xl font-bold text-foreground sm:text-5xl">

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Heebo } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -6,6 +6,8 @@ import { ProgressProvider } from "@/components/progress/ProgressProvider";
 import { CurrencyProvider } from "@/components/calculators/CurrencyProvider";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { SearchDialog } from "@/components/search/SearchDialog";
+import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
+import { Analytics } from "@/components/analytics/Analytics";
 import { SITE_URL } from "@/lib/site";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
@@ -26,6 +28,17 @@ export const metadata: Metadata = {
     template: "%s | מסלול המשקיע",
   },
   description: SITE_DESCRIPTION,
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "מסלול המשקיע",
+  },
+  alternates: {
+    canonical: "/",
+    types: { "application/rss+xml": "/feed.xml" },
+  },
+  twitter: { card: "summary_large_image" },
   openGraph: {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
@@ -33,6 +46,10 @@ export const metadata: Metadata = {
     locale: "he_IL",
     type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -58,6 +75,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SearchProvider>
           </CurrencyProvider>
         </ProgressProvider>
+        <ServiceWorkerRegistration />
+        <Analytics />
       </body>
     </html>
   );

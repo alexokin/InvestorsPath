@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { calculateCompoundInterest } from "@/lib/finance/compound";
 import { formatPercent } from "@/lib/format";
 import { formatMoney, currencySymbol, type Currency } from "@/lib/currency";
@@ -8,6 +9,12 @@ import { useCurrency } from "@/components/calculators/CurrencyProvider";
 import { CalculatorShell } from "@/components/calculators/CalculatorShell";
 import { NumberField } from "@/components/calculators/NumberField";
 import { ResultCard } from "@/components/calculators/ResultCard";
+import { useUrlSyncedState, type UrlStateSchema } from "@/lib/calculators/url-state";
+
+/**
+ * URL query keys (only written when `syncUrl` is on — see below):
+ *   p = principal, m = monthlyContribution, r = rate, y = years
+ */
 
 /** Simple inline SVG line chart of the year-end balance — no chart library. */
 function GrowthChart({ rows }: { rows: { year: number; endBalance: number }[] }) {
@@ -48,17 +55,43 @@ export function CompoundInterestCalculator({
   defaultRate = 8,
   defaultYears = 20,
   defaultCurrency,
+  syncUrl,
 }: {
   defaultPrincipal?: number;
   defaultMonthlyContribution?: number;
   defaultRate?: number;
   defaultYears?: number;
   defaultCurrency?: Currency;
+  /**
+   * Whether numeric inputs are synced to the URL query string (shareable
+   * deep link). Defaults to `true` only when this instance is rendered on
+   * a `/tools/` route (detected via `usePathname`); embedded lesson
+   * instances default to `false` so they never write to the URL. Pass
+   * explicitly to override either way.
+   */
+  syncUrl?: boolean;
 }) {
-  const [principal, setPrincipal] = useState(defaultPrincipal);
-  const [monthlyContribution, setMonthlyContribution] = useState(defaultMonthlyContribution);
-  const [rate, setRate] = useState(defaultRate);
-  const [years, setYears] = useState(defaultYears);
+  const pathname = usePathname();
+  const effectiveSyncUrl = syncUrl ?? (pathname?.startsWith("/tools/") ?? false);
+
+  const schema: UrlStateSchema = useMemo(
+    () => ({
+      p: { default: defaultPrincipal, min: 0 },
+      m: { default: defaultMonthlyContribution, min: 0 },
+      r: { default: defaultRate },
+      y: { default: defaultYears, min: 1, max: 60 },
+    }),
+    [defaultPrincipal, defaultMonthlyContribution, defaultRate, defaultYears]
+  );
+  const [urlState, setUrlState] = useUrlSyncedState(schema, { enabled: effectiveSyncUrl });
+  const principal = urlState.p;
+  const monthlyContribution = urlState.m;
+  const rate = urlState.r;
+  const years = urlState.y;
+  const setPrincipal = (v: number) => setUrlState((prev) => ({ ...prev, p: v }));
+  const setMonthlyContribution = (v: number) => setUrlState((prev) => ({ ...prev, m: v }));
+  const setRate = (v: number) => setUrlState((prev) => ({ ...prev, r: v }));
+  const setYears = (v: number) => setUrlState((prev) => ({ ...prev, y: v }));
   const { currency, seedDefaultCurrency } = useCurrency();
 
   useEffect(() => {
@@ -79,6 +112,7 @@ export function CompoundInterestCalculator({
 
   return (
     <CalculatorShell
+      shareable={effectiveSyncUrl}
       inputs={
         <>
           <NumberField

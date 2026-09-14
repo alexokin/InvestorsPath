@@ -17,9 +17,14 @@ npm run dev
 - Flashcards (`/flashcards/`, `/flashcards/<chapter>/`, `/flashcards/all/`) with a Leitner scheduler.
 - Progress dashboard (`/progress/`): completion, quiz scores, bookmarks, notes, JSON export/import, completion certificate.
 - Light / dark / system theme.
+- Nine calculators: compound interest, DCF, reverse DCF, Graham, multiples, margin of safety, bond price/YTM/duration, CAGR + Rule of 72, DDM. Calculator state on `/tools/*` is mirrored to the URL, so results can be shared by link.
+- Company analysis worksheet (`/tools/checklist/`), saved per company, printable, JSON export.
+- SEO: Open Graph images generated at build time, JSON-LD (Course / LearningResource / FAQ / Breadcrumb), `sitemap.xml`, `robots.txt`, `feed.xml` (RSS of `/changelog/`).
+- PWA: web manifest + hand-written service worker (`public/sw.js`, bump `CACHE_VERSION` when changing caching) with an `/offline/` fallback.
+- Optional cookie-less analytics: set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`, or `NEXT_PUBLIC_UMAMI_WEBSITE_ID` + `NEXT_PUBLIC_UMAMI_SRC` (see `.env.example`).
 
 All learner state lives in `localStorage`: `vip:progress:v2` (progress, bookmarks, notes; `v1` is migrated automatically),
-`vip:flashcards:v1`, `vip:theme:v1`, `vip:currency:v1`.
+`vip:flashcards:v1`, `vip:worksheets:v1`, `vip:theme:v1`, `vip:currency:v1`.
 
 ## Verification
 
@@ -30,6 +35,28 @@ npm run lint
 npm test
 npm run build               # outputs static site to ./out
 ```
+
+## End-to-end tests
+
+```bash
+npm run build                                  # e2e runs against the static export in ./out
+npx playwright install --with-deps chromium    # one-time
+npm run e2e                                    # headless smoke suite (desktop + mobile viewport)
+npm run e2e:ui                                 # interactive mode
+PW_CHANNEL=chrome npm run e2e                  # use the installed Chrome/Edge ("msedge") instead of downloading Chromium
+```
+
+`npm run build` runs `scripts/fix-segment-prefetch.mjs` afterwards. It works around a Next.js static-export bug on
+Windows where the client router's segment prefetch files are written into nested folders and 404 at runtime; on
+Linux/macOS it is a no-op.
+
+## CI and deploy
+
+`.github/workflows/ci.yml` runs validate / typecheck / lint / unit tests / build / e2e and a Lighthouse CI pass
+(`lighthouserc.json`; accessibility, best-practices and SEO regressions fail, performance warns).
+`.github/workflows/deploy-pages.yml` deploys `./out` to GitHub Pages after CI succeeds on `main`; set the `SITE_URL`
+repository variable. Project-pages sites (`user.github.io/repo`) need `basePath`/`assetPrefix` in `next.config.ts`;
+see the comment at the top of that workflow.
 
 ## Adding a new chapter or lesson
 

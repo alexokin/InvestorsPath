@@ -1,12 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { grahamNumber, grahamGrowthValue } from "@/lib/finance/graham";
 import { formatMoney, currencySymbol, type Currency } from "@/lib/currency";
 import { useCurrency } from "@/components/calculators/CurrencyProvider";
 import { CalculatorShell } from "@/components/calculators/CalculatorShell";
 import { NumberField } from "@/components/calculators/NumberField";
 import { ResultCard } from "@/components/calculators/ResultCard";
+import { useUrlSyncedState, type UrlStateSchema } from "@/lib/calculators/url-state";
+
+/**
+ * URL query keys (only written when `syncUrl` is on — see below):
+ *   eps = eps, bvps = bookValuePerShare, g = growthRate, aaa = aaaBondYield,
+ *   px = price
+ */
 
 export function GrahamCalculator({
   defaultEps = 5,
@@ -15,6 +23,7 @@ export function GrahamCalculator({
   defaultAaaBondYield = 4.4,
   defaultPrice,
   defaultCurrency,
+  syncUrl,
 }: {
   defaultEps?: number;
   defaultBookValuePerShare?: number;
@@ -22,12 +31,38 @@ export function GrahamCalculator({
   defaultAaaBondYield?: number;
   defaultPrice?: number;
   defaultCurrency?: Currency;
+  /**
+   * Whether numeric inputs are synced to the URL query string. Defaults to
+   * `true` only when this instance is rendered on a `/tools/` route
+   * (detected via `usePathname`); embedded lesson instances default to
+   * `false`. Pass explicitly to override either way.
+   */
+  syncUrl?: boolean;
 }) {
-  const [eps, setEps] = useState(defaultEps);
-  const [bookValuePerShare, setBookValuePerShare] = useState(defaultBookValuePerShare);
-  const [growthRate, setGrowthRate] = useState(defaultGrowthRate);
-  const [aaaBondYield, setAaaBondYield] = useState(defaultAaaBondYield);
-  const [price, setPrice] = useState(defaultPrice ?? 0);
+  const pathname = usePathname();
+  const effectiveSyncUrl = syncUrl ?? (pathname?.startsWith("/tools/") ?? false);
+
+  const schema: UrlStateSchema = useMemo(
+    () => ({
+      eps: { default: defaultEps },
+      bvps: { default: defaultBookValuePerShare },
+      g: { default: defaultGrowthRate },
+      aaa: { default: defaultAaaBondYield },
+      px: { default: defaultPrice ?? 0, min: 0 },
+    }),
+    [defaultEps, defaultBookValuePerShare, defaultGrowthRate, defaultAaaBondYield, defaultPrice]
+  );
+  const [urlState, setUrlState] = useUrlSyncedState(schema, { enabled: effectiveSyncUrl });
+  const eps = urlState.eps;
+  const bookValuePerShare = urlState.bvps;
+  const growthRate = urlState.g;
+  const aaaBondYield = urlState.aaa;
+  const price = urlState.px;
+  const setEps = (v: number) => setUrlState((prev) => ({ ...prev, eps: v }));
+  const setBookValuePerShare = (v: number) => setUrlState((prev) => ({ ...prev, bvps: v }));
+  const setGrowthRate = (v: number) => setUrlState((prev) => ({ ...prev, g: v }));
+  const setAaaBondYield = (v: number) => setUrlState((prev) => ({ ...prev, aaa: v }));
+  const setPrice = (v: number) => setUrlState((prev) => ({ ...prev, px: v }));
   const { currency, seedDefaultCurrency } = useCurrency();
 
   useEffect(() => {
@@ -45,6 +80,7 @@ export function GrahamCalculator({
 
   return (
     <CalculatorShell
+      shareable={effectiveSyncUrl}
       inputs={
         <>
           <NumberField

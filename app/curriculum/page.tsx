@@ -2,14 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getChapters } from "@/lib/content/loader";
 import { LessonList } from "@/components/chapter/LessonList";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { chapterListJsonLd } from "@/lib/seo/jsonld";
 
-export const metadata: Metadata = { title: "תוכנית הלימודים" };
+export const metadata: Metadata = {
+  title: "תוכנית הלימודים",
+  alternates: { canonical: "/curriculum/" },
+};
 
 export default function CurriculumPage() {
   const chapters = getChapters();
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+      <JsonLd data={chapterListJsonLd(chapters)} />
       <h1 className="text-2xl font-bold text-foreground sm:text-3xl">תוכנית הלימודים המלאה</h1>
       <p className="mt-2 text-muted">
         {chapters.length} פרקים ו-{chapters.reduce((n, c) => n + c.lessons.length, 0)} שיעורים,

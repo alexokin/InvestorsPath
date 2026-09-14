@@ -5,3 +5,10 @@ out/
 .env*.local
 public/search-index.json
 .DS_Store
+
+# Playwright / Lighthouse CI
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+.lighthouseci

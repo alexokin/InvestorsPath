@@ -1,0 +1,78 @@
+name: Deploy to GitHub Pages
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (static export)
+        run: npm run build
+
+      # GitHub Pages ignores files/folders starting with "_" unless this
+      # marker is present, so Next's _next/ asset directory would otherwise
+      # be dropped from the deployed artifact.
+      - name: Add .nojekyll
+        run: touch out/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+# Note: this workflow assumes the site is served from the domain root (a
+# custom domain, or a user/org Pages site — username.github.io). If this
+# repo is instead deployed as a *project* Pages site
+# (username.github.io/repo-name), every internal absolute path needs the
+# repo name prefix. Do NOT change next.config.ts here — hand this snippet
+# to whoever owns it instead:
+#
+#   const nextConfig: NextConfig = {
+#     output: "export",
+#     trailingSlash: true,
+#     images: { unoptimized: true },
+#     basePath: "/repo-name",
+#     assetPrefix: "/repo-name/",
+#   };
+#
+# and set NEXT_PUBLIC_SITE_URL to https://username.github.io/repo-name.

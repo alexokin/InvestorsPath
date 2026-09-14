@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="מסלול המשקיע">
+  <rect width="192" height="192" rx="34" fill="#2563eb" />
+  <g fill="#f8fafc">
+    <rect x="48" y="102" width="26" height="28" rx="3" />
+    <rect x="83" y="82" width="26" height="48" rx="3" />
+    <rect x="118" y="62" width="26" height="68" rx="3" />
+  </g>
+</svg>

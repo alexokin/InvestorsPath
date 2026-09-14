@@ -8,6 +8,10 @@ import { DcfCalculator } from "@/components/calculators/DcfCalculator";
 import { GrahamCalculator } from "@/components/calculators/GrahamCalculator";
 import { MultiplesComparison } from "@/components/calculators/MultiplesComparison";
 import { MarginOfSafetyCalculator } from "@/components/calculators/MarginOfSafetyCalculator";
+import { BondCalculator } from "@/components/calculators/BondCalculator";
+import { ReverseDcfCalculator } from "@/components/calculators/ReverseDcfCalculator";
+import { CagrCalculator } from "@/components/calculators/CagrCalculator";
+import { DdmCalculator } from "@/components/calculators/DdmCalculator";
 
 export const mdxComponents = {
   Callout,
@@ -20,4 +24,8 @@ export const mdxComponents = {
   GrahamCalculator,
   MultiplesComparison,
   MarginOfSafetyCalculator,
+  BondCalculator,
+  ReverseDcfCalculator,
+  CagrCalculator,
+  DdmCalculator,
 };

@@ -22,6 +22,8 @@ import { LessonNotes } from "@/components/lesson/LessonNotes";
 import { RelatedLinks, type RelatedLinkItem } from "@/components/lesson/RelatedLinks";
 import { Badge } from "@/components/ui/Badge";
 import { getToolMeta } from "@/lib/finance/tools";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, faqJsonLd, lessonJsonLd } from "@/lib/seo/jsonld";
 
 export const dynamicParams = false;
 
@@ -44,7 +46,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { chapter, lesson } = await params;
   const l = getLesson(chapter, lesson);
-  return { title: l?.title ?? "שיעור לא נמצא", description: l?.description };
+  if (!l) return { title: "שיעור לא נמצא" };
+
+  return {
+    title: l.title,
+    description: l.description,
+    alternates: { canonical: l.href },
+    openGraph: {
+      title: l.title,
+      description: l.description,
+      type: "article",
+      locale: "he_IL",
+    },
+    twitter: { card: "summary_large_image" },
+  };
 }
 
 export default async function LessonPage({
@@ -74,16 +89,20 @@ export default async function LessonPage({
     return tool ? [{ href: `/tools/${tool.id}/`, label: tool.name_he, icon: Calculator }] : [];
   });
 
+  const breadcrumbItems = [
+    { label: "תוכנית הלימודים", href: "/curriculum/" },
+    { label: chapter.title, href: chapter.href },
+    { label: lesson.title },
+  ];
+  const faq = faqJsonLd(lesson.quiz);
+
   return (
     <LessonLayout chapter={chapter} headings={headings}>
+      <JsonLd data={lessonJsonLd(lesson, chapter)} />
+      <JsonLd data={breadcrumbJsonLd(breadcrumbItems)} />
+      {faq ? <JsonLd data={faq} /> : null}
       <LastVisitedTracker chapterSlug={chapterSlug} lessonSlug={lessonSlug} />
-      <Breadcrumbs
-        items={[
-          { label: "תוכנית הלימודים", href: "/curriculum/" },
-          { label: chapter.title, href: chapter.href },
-          { label: lesson.title },
-        ]}
-      />
+      <Breadcrumbs items={breadcrumbItems} />
       <h1 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">{lesson.title}</h1>
       <p className="mt-2 text-muted">{lesson.description}</p>
       <div className="mt-3 flex flex-wrap items-center gap-2">

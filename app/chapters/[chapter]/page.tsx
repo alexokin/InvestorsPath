@@ -7,6 +7,8 @@ import { ChapterHeader } from "@/components/chapter/ChapterHeader";
 import { LessonList } from "@/components/chapter/LessonList";
 import { RemainingTime } from "@/components/chapter/RemainingTime";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd, chapterJsonLd } from "@/lib/seo/jsonld";
 
 export const dynamicParams = false;
 
@@ -21,7 +23,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { chapter: chapterSlug } = await params;
   const chapter = getChapter(chapterSlug);
-  return { title: chapter?.title ?? "פרק לא נמצא" };
+  if (!chapter) return { title: "פרק לא נמצא" };
+
+  return {
+    title: chapter.title,
+    description: chapter.description,
+    alternates: { canonical: chapter.href },
+    openGraph: {
+      title: chapter.title,
+      description: chapter.description,
+      type: "article",
+      locale: "he_IL",
+    },
+    twitter: { card: "summary_large_image" },
+  };
 }
 
 export default async function ChapterPage({
@@ -33,14 +48,16 @@ export default async function ChapterPage({
   const chapter = getChapter(chapterSlug);
   if (!chapter) notFound();
 
+  const breadcrumbItems = [
+    { label: "תוכנית הלימודים", href: "/curriculum/" },
+    { label: chapter.title },
+  ];
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
-      <Breadcrumbs
-        items={[
-          { label: "תוכנית הלימודים", href: "/curriculum/" },
-          { label: chapter.title },
-        ]}
-      />
+      <JsonLd data={chapterJsonLd(chapter)} />
+      <JsonLd data={breadcrumbJsonLd(breadcrumbItems)} />
+      <Breadcrumbs items={breadcrumbItems} />
       <div className="mt-4">
         <ChapterHeader chapter={chapter} />
       </div>

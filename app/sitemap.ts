@@ -15,6 +15,11 @@ const STATIC_ROUTES: { path: string; priority: number }[] = [
   { path: "/flashcards/", priority: 0.7 },
   { path: "/flashcards/all/", priority: 0.5 },
   { path: "/progress/", priority: 0.5 },
+  { path: "/changelog/", priority: 0.5 },
+  // Created by another agent; listed here regardless since the route will
+  // exist by the time the site is built.
+  { path: "/tools/checklist/", priority: 0.6 },
+  { path: "/offline/", priority: 0.1 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

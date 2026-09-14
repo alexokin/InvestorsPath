@@ -3,8 +3,13 @@ import Link from "next/link";
 import { Layers } from "lucide-react";
 import { LinkButton } from "@/components/ui/Button";
 import { getGlossaryEntries, type GlossaryEntry } from "@/lib/content/glossary";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { glossaryJsonLd } from "@/lib/seo/jsonld";
 
-export const metadata: Metadata = { title: "מילון מונחים" };
+export const metadata: Metadata = {
+  title: "מילון מונחים",
+  alternates: { canonical: "/glossary/" },
+};
 
 const HEBREW_ALPHABET = [
   "א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "כ", "ל",
@@ -42,6 +47,7 @@ export default function GlossaryPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+      {entries.length > 0 ? <JsonLd data={glossaryJsonLd(entries)} /> : null}
       <h1 className="text-2xl font-bold text-foreground sm:text-3xl">מילון מונחים</h1>
       <p className="mt-2 text-muted">כל המונחים שנלמדים לאורך הקורס, לפי סדר אלפביתי.</p>
       <LinkButton href="/flashcards/all/" variant="secondary" size="sm" className="mt-4">

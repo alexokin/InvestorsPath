@@ -22,6 +22,11 @@ const STATIC_ROUTES = new Set([
   "/glossary/",
   "/cheatsheets/",
   "/tools/",
+  "/tools/checklist/",
+  "/progress/",
+  "/flashcards/",
+  "/flashcards/all/",
+  "/changelog/",
 ]);
 
 const errors: string[] = [];

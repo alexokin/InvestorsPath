@@ -254,6 +254,7 @@
     - symbol: Face Value
       name_he: ערך נקוב
   notes_he: מחיר האג"ח נע הפוך מהתשואה לפדיון.
+  relatedTool: bond
 
 - id: yield-to-maturity
   name_he: תשואה לפדיון
@@ -268,3 +269,84 @@
     - symbol: Price
       name_he: מחיר שוק
   notes_he: קירוב לתשואה השנתית הכוללת אם האג"ח מוחזקת עד לפדיון.
+  relatedTool: bond
+
+- id: reverse-dcf-implied-growth
+  name_he: DCF הפוך - צמיחה גלומה
+  expression: "Market Cap = Sum( FCF0*(1+g)^t / (1 + r)^t ) + TV / (1 + r)^n - Net Debt"
+  variables:
+    - symbol: Market Cap
+      name_he: שווי שוק נוכחי (מחיר x מספר מניות)
+    - symbol: g
+      name_he: קצב הצמיחה הגלום (הנעלם שפותרים)
+    - symbol: FCF0
+      name_he: תזרים מזומנים חופשי נוכחי
+    - symbol: r
+      name_he: שיעור היוון
+    - symbol: TV
+      name_he: ערך טרמינלי
+  notes_he: אותה משוואת DCF בדיוק, רק שפותרים אותה עבור g בהינתן ששווי המודל שווה לשווי השוק.
+  relatedTool: reverse-dcf
+
+- id: cagr
+  name_he: קצב צמיחה שנתי ממוצע
+  expression: "CAGR = (End Value / Start Value)^(1/n) - 1"
+  variables:
+    - symbol: End Value
+      name_he: ערך בסוף התקופה
+    - symbol: Start Value
+      name_he: ערך בתחילת התקופה
+    - symbol: n
+      name_he: מספר שנים
+  notes_he: נותן קצב צמיחה שנתי אחיד היפותטי שהיה מניב את אותה תוצאה כוללת בפועל.
+  relatedTool: cagr
+
+- id: rule-of-72
+  name_he: כלל ה-72
+  expression: "Years to Double ≈ 72 / (Rate * 100)"
+  variables:
+    - symbol: Rate
+      name_he: תשואה שנתית קבועה (עשרוני)
+  notes_he: קירוב מהיר ונוח לזיכרון למספר השנים הנדרש להכפלת השקעה בתשואה קבועה; מדויק יותר סביב 6%-10%.
+  relatedTool: cagr
+
+- id: ddm-gordon
+  name_he: מודל היוון דיבידנדים (גורדון)
+  expression: "Fair Value = D1 / (r - g)"
+  variables:
+    - symbol: D1
+      name_he: דיבידנד צפוי למניה בשנה הבאה
+    - symbol: r
+      name_he: תשואה נדרשת
+    - symbol: g
+      name_he: קצב צמיחה קבוע לנצח של הדיבידנד
+  notes_he: מניח דיבידנד הצומח בקצב קבוע לנצח; אינו מוגדר כאשר g גדול או שווה ל-r.
+  relatedTool: ddm
+
+- id: ytm
+  name_he: תשואה לפדיון (הגדרה מדויקת)
+  expression: "Price = Sum( Coupon / (1 + YTM/f)^t ) + Face Value / (1 + YTM/f)^n"
+  variables:
+    - symbol: Coupon
+      name_he: תשלום קופון תקופתי
+    - symbol: f
+      name_he: מספר תשלומים בשנה
+    - symbol: n
+      name_he: מספר תקופות עד הפדיון
+    - symbol: Face Value
+      name_he: ערך נקוב
+  notes_he: אין נוסחה סגורה ל-YTM; מוצאים אותה בפועל בשיטת חצייה או ניוטון-רפסון על נוסחת המחיר.
+  relatedTool: bond
+
+- id: macaulay-duration
+  name_he: מח"מ מקולי
+  expression: "Macaulay Duration = Sum( t * PV(CF_t) ) / Price"
+  variables:
+    - symbol: t
+      name_he: זמן (בשנים) עד תזרים המזומנים
+    - symbol: PV(CF_t)
+      name_he: ערך נוכחי של תזרים המזומנים בזמן t
+    - symbol: Price
+      name_he: מחיר האג"ח (סכום כל הערכים הנוכחיים)
+  notes_he: הזמן הממוצע המשוקלל (בשנים) לקבלת תזרימי המזומנים של האג"ח; משמש בסיס למח"מ מותאם.
+  relatedTool: bond
