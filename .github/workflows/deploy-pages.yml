@@ -22,6 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+      # Set the BASE_PATH repo variable to "/InvestorsPath" while serving
+      # from the default Pages URL. Clear it (delete the variable, or set it
+      # to an empty value) once a custom domain is mapped at the repo root -
+      # see the comment near the bottom of this file.
+      NEXT_PUBLIC_BASE_PATH: ${{ vars.BASE_PATH }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,19 +65,17 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-# Note: this workflow assumes the site is served from the domain root (a
-# custom domain, or a user/org Pages site — username.github.io). If this
-# repo is instead deployed as a *project* Pages site
-# (username.github.io/repo-name), every internal absolute path needs the
-# repo name prefix. Do NOT change next.config.ts here — hand this snippet
-# to whoever owns it instead:
+# This repo currently deploys as a *project* Pages site
+# (alexokin.github.io/InvestorsPath), a subpath rather than the domain root,
+# so next.config.ts reads NEXT_PUBLIC_BASE_PATH (set above from the BASE_PATH
+# repo variable) and applies basePath/assetPrefix only for this build - local
+# dev, local builds, e2e and Lighthouse are never prefixed.
 #
-#   const nextConfig: NextConfig = {
-#     output: "export",
-#     trailingSlash: true,
-#     images: { unoptimized: true },
-#     basePath: "/repo-name",
-#     assetPrefix: "/repo-name/",
-#   };
-#
-# and set NEXT_PUBLIC_SITE_URL to https://username.github.io/repo-name.
+# When a custom domain is mapped (Settings -> Pages -> Custom domain, plus
+# the DNS record it asks for), the site serves from the root instead:
+#   1. Delete the BASE_PATH repo variable (or set it to an empty value).
+#   2. Update the SITE_URL repo variable (and local .env.local) to the new
+#      domain.
+#   3. Re-run this workflow (push to main, or Actions -> Run workflow).
+# No code change is needed for that switch - next.config.ts already treats
+# an unset NEXT_PUBLIC_BASE_PATH as "no prefix".
