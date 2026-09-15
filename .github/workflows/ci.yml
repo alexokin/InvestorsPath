@@ -18,10 +18,6 @@ jobs:
       # (e.g. on forks); set the real value under Settings > Secrets and
       # variables > Actions > Variables > SITE_URL.
       NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL || 'https://example.com' }}
-      # Build with the same base path deploy-pages.yml uses, so the build,
-      # e2e suite (via serve-out.mjs) and Lighthouse all test the
-      # configuration that actually ships to GitHub Pages.
-      NEXT_PUBLIC_BASE_PATH: ${{ vars.BASE_PATH }}
     steps:
       - uses: actions/checkout@v4
 
@@ -45,7 +41,7 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Build (static export)
+      - name: Build
         run: npm run build
 
       - name: Install Playwright browsers
@@ -64,14 +60,9 @@ jobs:
 
       - name: Lighthouse CI
         continue-on-error: true
-        env:
-          BASE_PATH: ${{ vars.BASE_PATH }}
         run: |
-          npm run serve:out &
-          npx --yes wait-on http://localhost:4173${BASE_PATH}/
+          npm run start -- -p 4173 &
+          npx --yes wait-on http://localhost:4173/
           npx --yes @lhci/cli autorun \
-            --collect.url="http://localhost:4173${BASE_PATH}/" \
-            --collect.url="http://localhost:4173${BASE_PATH}/curriculum/" \
-            --collect.url="http://localhost:4173${BASE_PATH}/lessons/before-you-start/what-is-value-investing/" \
-            --collect.url="http://localhost:4173${BASE_PATH}/tools/dcf/" \
-            --collect.url="http://localhost:4173${BASE_PATH}/progress/"
+            --collect.url="http://localhost:4173/" \
+            --collect.url="http://localhost:4173/login/"

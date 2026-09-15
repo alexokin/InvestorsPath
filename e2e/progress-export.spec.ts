@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { p } from "./helpers";
+import { p, signIn } from "./helpers";
 
 test("progress export downloads a v2 JSON file", async ({ page }) => {
+  await signIn(page);
   await page.goto(p("/progress/"));
   await expect(page.getByRole("heading", { name: "ההתקדמות שלי" })).toBeVisible();
 

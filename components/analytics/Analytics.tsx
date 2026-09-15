@@ -1,8 +1,9 @@
 import Script from "next/script";
 
 /**
- * Privacy-friendly analytics, opt-in via env vars set at build time (this is
- * a static export — nothing here can react to runtime config). Renders
+ * Privacy-friendly analytics, opt-in via env vars set at build time (these
+ * are `NEXT_PUBLIC_*` values baked in at build time — nothing here can react
+ * to runtime config). Renders
  * nothing unless one of the two providers below is configured:
  *
  * - Plausible: set NEXT_PUBLIC_PLAUSIBLE_DOMAIN.

@@ -1,21 +1,42 @@
 import { test, expect } from "@playwright/test";
-import { p } from "./helpers";
+import { p, signIn } from "./helpers";
 
-const PAGES = ["/", "/curriculum/", "/tools/", "/progress/", "/flashcards/all/"];
+const SIGNED_OUT_PAGES = ["/", "/login/"];
+const GATED_PAGES = ["/dashboard/", "/curriculum/", "/tools/", "/progress/", "/flashcards/all/"];
 
-for (const path of PAGES) {
-  test(`${path} is RTL Hebrew with no console errors`, async ({ page }) => {
-    const consoleErrors: string[] = [];
-    page.on("console", (msg) => {
-      if (msg.type() !== "error") return;
-      // Next's client segment-cache prefetch (`?_rsc=` / `__next.*.txt`) can 404
-      // against a static export; it is a harmless prefetch miss, not a page error.
-      const src = msg.location()?.url ?? "";
-      if (/_rsc=|__next\./.test(src)) return;
-      consoleErrors.push(msg.text());
-    });
-    page.on("pageerror", (err) => consoleErrors.push(String(err)));
+function collectConsoleErrors(page: import("@playwright/test").Page): string[] {
+  const consoleErrors: string[] = [];
+  page.on("console", (msg) => {
+    if (msg.type() !== "error") return;
+    // Next's client segment-cache prefetch (`?_rsc=` / `__next.*.txt`) can 404
+    // for a statically generated route; it is a harmless prefetch miss, not a page error.
+    const src = msg.location()?.url ?? "";
+    if (/_rsc=|__next\./.test(src)) return;
+    consoleErrors.push(msg.text());
+  });
+  page.on("pageerror", (err) => consoleErrors.push(String(err)));
+  return consoleErrors;
+}
 
+for (const path of SIGNED_OUT_PAGES) {
+  test(`${path} (signed out) is RTL Hebrew with no console errors`, async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+
+    await page.goto(p(path));
+
+    const html = page.locator("html");
+    await expect(html).toHaveAttribute("dir", "rtl");
+    await expect(html).toHaveAttribute("lang", "he");
+
+    expect(consoleErrors, `console errors on ${path}: ${consoleErrors.join("\n")}`).toEqual([]);
+  });
+}
+
+for (const path of GATED_PAGES) {
+  test(`${path} (signed in) is RTL Hebrew with no console errors`, async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+
+    await signIn(page);
     await page.goto(p(path));
 
     const html = page.locator("html");

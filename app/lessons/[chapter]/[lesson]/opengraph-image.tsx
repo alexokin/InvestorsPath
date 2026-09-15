@@ -7,7 +7,7 @@ export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
 // Mirrors app/lessons/[chapter]/[lesson]/page.tsx: every lesson is rendered
-// at build time and unknown params 404 (required for output: "export").
+// at build time and unknown params 404 (keeps this route statically generated).
 export const dynamicParams = false;
 
 export function generateStaticParams() {

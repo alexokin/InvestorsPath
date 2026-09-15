@@ -4,15 +4,15 @@
  * colocated with a single route) because several route segments render the
  * same visual card with different text.
  *
- * `opengraph-image.tsx` files are statically optimized under
- * `output: "export"` — see the "Generate images using code" section of the
- * Next.js opengraph-image docs (node_modules/next/dist/docs/01-app/03-api-reference/
+ * `opengraph-image.tsx` files are statically optimized by default — see the
+ * "Generate images using code" section of the Next.js opengraph-image docs
+ * (node_modules/next/dist/docs/01-app/03-api-reference/
  * 03-file-conventions/01-metadata/opengraph-image.md): "By default, generated
  * images are statically optimized (generated at build time and cached)".
  * Dynamic segments need `generateStaticParams` + `dynamicParams = false`,
- * exactly like a page (see static-exports.md: "Dynamic Routes without
- * generateStaticParams()" is unsupported) — each route file sets that up
- * itself, mirroring its sibling `page.tsx`.
+ * exactly like a page, to keep this static (unknown params 404 instead of
+ * rendering on demand) — each route file sets that up itself, mirroring its
+ * sibling `page.tsx`.
  */
 import type { CSSProperties, ReactElement } from "react";
 import { toVisualRtl, wrapRtlLines } from "@/lib/seo/bidi";

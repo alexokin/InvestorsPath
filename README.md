@@ -1,6 +1,6 @@
 # מסלול המשקיע
 
-Hebrew, RTL, statically-exported Next.js learning platform for value investing.
+Hebrew, RTL Next.js learning platform for value investing.
 
 ## Development
 
@@ -23,8 +23,74 @@ npm run dev
 - PWA: web manifest + hand-written service worker (`public/sw.js`, bump `CACHE_VERSION` when changing caching) with an `/offline/` fallback.
 - Optional cookie-less analytics: set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`, or `NEXT_PUBLIC_UMAMI_WEBSITE_ID` + `NEXT_PUBLIC_UMAMI_SRC` (see `.env.example`).
 
-All learner state lives in `localStorage`: `vip:progress:v2` (progress, bookmarks, notes; `v1` is migrated automatically),
-`vip:flashcards:v1`, `vip:worksheets:v1`, `vip:theme:v1`, `vip:currency:v1`.
+Learner state is stored per account and synced across devices (see "Auth & sync" below); theme and
+currency stay device-local. `localStorage` keys: `vip:progress:v2` (progress, bookmarks, notes; `v1`
+is migrated automatically), `vip:flashcards:v1`, `vip:worksheets:v1`, `vip:theme:v1`, `vip:currency:v1`.
+
+## Auth & sync
+
+Sign-in is required for the course itself; `/` is a public landing page and everything under
+`/dashboard/`, `/chapters/`, `/lessons/`, `/flashcards/`, `/progress/`, `/tools/`, `/cheatsheets/`,
+`/glossary/` and `/curriculum/` is gated (see `PROTECTED_PREFIXES` in `lib/auth/protected-paths.ts`).
+
+- **Auth provider**: Supabase Auth, with Google OAuth and passwordless email magic links (no
+  passwords). Sessions are cookie-based via `@supabase/ssr`, so the server and the browser share
+  one session.
+- **`proxy.ts`** (repo root, Next's server-side gate in front of every request): reads the session
+  from cookies, redirects signed-out visitors hitting a protected path to `/login/?next=<path>`,
+  and redirects signed-in visitors away from `/` or `/login/` to `/dashboard/`.
+- **Routes**: `/login/` (Google button + email form), `/dashboard/` (the signed-in home — chapter
+  grid, resume card, progress), `/auth/callback/` (OAuth PKCE code exchange), `/auth/confirm/`
+  (magic-link `token_hash` verification — this indirection, rather than the PKCE flow, is what lets
+  a link requested on desktop be opened on a phone).
+- **Data**: a single Postgres table, `learner_state(user_id, key, data jsonb, updated_at)` with one
+  row per user per store (`progress` / `flashcards` / `worksheets`), row-level security restricting
+  every row to its owner. See `supabase/migrations/0001_learner_state.sql`.
+- **Sync engine** (`lib/sync/`): `localStorage` remains the working cache the app reads/writes
+  instantly. On sign-in the engine pulls the three rows and overwrites local state (or, if there's
+  no remote data yet and no "owner" marker, uploads whatever is already in local storage once,
+  covering the first sign-in after using the app anonymously). Local writes go through a storage
+  event bus and are pushed to Supabase on a ~1.5s debounce, flushed immediately on tab hide/close.
+  An owner marker (`vip:sync:owner:v1`) stops one account's leftover local data from being uploaded
+  as another account's on a shared browser. Signing out flushes pending writes, clears the local
+  stores, and redirects home.
+- **Mock auth mode**: when `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` are empty at
+  build time, the app builds against an in-memory mock instead of Supabase — this is what local dev,
+  CI and the Playwright suite run under, with no secrets required. The login buttons set a
+  `vip-mock-user` cookie directly; `proxy.ts` and `AuthProvider` trust that cookie the same way they'd
+  trust a Supabase session. In e2e specs, `signIn(page)` from `e2e/helpers.ts` sets that cookie
+  before the first `page.goto`.
+- **Env vars**: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (see `.env.example`;
+  both public, RLS protects the data — leave empty for mock auth). `scripts/check-env.mjs` (run via
+  `vercel.json`'s `buildCommand`) fails a **production** Vercel build if either is missing; it's a
+  no-op locally and in CI, where the app just falls back to mock mode.
+
+<details>
+<summary>Manual Supabase/Vercel setup (one-time, not needed for local dev/CI)</summary>
+
+1. Create a Supabase project (region close to Vercel, e.g. `eu-central-1`). Copy the Project URL +
+   anon key. Run `supabase/migrations/0001_learner_state.sql` in the SQL editor.
+2. Authentication → URL Configuration: Site URL = the production URL; add redirect URLs for local
+   dev, the production domain and Vercel preview deployments, all ending in `/auth/callback/`.
+3. Google Cloud Console: OAuth consent screen (External) → Web OAuth client with redirect URI
+   `https://<project-ref>.supabase.co/auth/v1/callback` → paste the Client ID/Secret into Supabase
+   → Authentication → Providers → Google.
+4. Authentication → Providers → Email: enabled. Email Templates (Magic Link and Confirm signup):
+   Hebrew, `<div dir="rtl">`, and the link **must** point at
+   `{{ .SiteURL }}/auth/confirm/?token_hash={{ .TokenHash }}&type=email` (not the default template,
+   which uses the PKCE `{{ .ConfirmationURL }}`) and should include `{{ .Token }}` for the six-digit
+   code fallback.
+5. Configure custom SMTP (e.g. Resend/Brevo/Postmark) — Supabase's built-in sender is rate-limited
+   and English-branded.
+6. Vercel: import the repo, framework Next.js, defaults. Set `NEXT_PUBLIC_SITE_URL`,
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` for both Production and Preview, then
+   deploy. `vercel.json` pins the build region and runs `check:env` before `next build`.
+7. If the site previously lived on GitHub Pages, retire it: GitHub repo → Settings → Pages →
+   Source → "None".
+8. For real-auth testing locally, put the two Supabase vars in `.env.local`; leave them empty to
+   stay in mock mode.
+
+</details>
 
 ## Verification
 
@@ -33,48 +99,44 @@ npm run validate:content   # content schema + link + word-count checks (also run
 npm run typecheck
 npm run lint
 npm test
-npm run build               # outputs static site to ./out
+npm run build                # outputs .next/
 ```
 
 ## End-to-end tests
 
 ```bash
-npm run build                                  # e2e runs against the static export in ./out
+npm run build                                  # e2e runs against a production `next start` server
 npx playwright install --with-deps chromium    # one-time
 npm run e2e                                    # headless smoke suite (desktop + mobile viewport)
 npm run e2e:ui                                 # interactive mode
 PW_CHANNEL=chrome npm run e2e                  # use the installed Chrome/Edge ("msedge") instead of downloading Chromium
 ```
 
-`npm run build` runs `scripts/fix-segment-prefetch.mjs` afterwards. It works around a Next.js static-export bug on
-Windows where the client router's segment prefetch files are written into nested folders and 404 at runtime; on
-Linux/macOS it is a no-op.
+`playwright.config.ts`'s `webServer` runs `npm run start -- -p 4173` automatically, so `npm run e2e` normally
+doesn't need a server started by hand.
 
-`npm run serve:out` (`scripts/serve-out.mjs`) serves `./out` on port 4173 (`PORT` to override); it mounts the export
-at `NEXT_PUBLIC_BASE_PATH` (empty by default), matching whatever base path the build in `./out` was made with. This
-is what `playwright test`'s `webServer` runs automatically, so `npm run e2e` normally doesn't need it directly.
+The suite builds and runs in mock auth mode (no Supabase secrets in CI or a local checkout by
+default); most specs start with `signIn(page)` from `e2e/helpers.ts` to set the mock session
+cookie before navigating to a protected path. `e2e/helpers.ts` also exports `BASE_PATH` (always
+`""`), `p()` and `rx()`, kept only so specs can build URLs/selectors without every spec needing an
+edit.
 
-To test the exact configuration that deploys to GitHub Pages (built and served under `/InvestorsPath`, matching
-`deploy-pages.yml`), build and run e2e with the same base path:
+## Deploy
 
-```bash
-NEXT_PUBLIC_BASE_PATH=/InvestorsPath npm run build
-NEXT_PUBLIC_BASE_PATH=/InvestorsPath npm run e2e
-```
+Vercel (GitHub integration): import the repo, framework Next.js, defaults. `vercel.json` sets the
+build region and runs `check:env` before `next build` so a production deploy fails fast if the
+Supabase env vars are missing. Env vars for Production + Preview: `NEXT_PUBLIC_SITE_URL` (production
+domain), `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — see "Auth & sync" above for
+the one-time Supabase/Google setup.
 
-`e2e/helpers.ts` exports `BASE_PATH`, `p()` and `rx()`, which every spec uses to build URLs/selectors relative to
-whatever base path the current run is testing.
+A server proxy (`proxy.ts`) gates the course, so the app is served by Vercel rather than as a
+static export on GitHub Pages.
 
-## CI and deploy
+## CI
 
 `.github/workflows/ci.yml` runs validate / typecheck / lint / unit tests / build / e2e and a Lighthouse CI pass
-(`lighthouserc.json`; accessibility, best-practices and SEO regressions fail, performance warns). The build, e2e and
-Lighthouse steps all set `NEXT_PUBLIC_BASE_PATH` from the `BASE_PATH` repo variable, so CI tests the same prefixed
-build that `deploy-pages.yml` ships; Lighthouse runs against `npm run serve:out` (rather than `staticDistDir`, which
-can't mount a base path) so its URLs can include the prefix.
-`.github/workflows/deploy-pages.yml` deploys `./out` to GitHub Pages after CI succeeds on `main`; set the `SITE_URL`
-repository variable. Project-pages sites (`user.github.io/repo`) need `basePath`/`assetPrefix` in `next.config.ts`;
-see the comment at the top of that workflow.
+(`lighthouserc.json`; accessibility, best-practices and SEO regressions fail, performance warns), against a
+production `next start` server on port 4173.
 
 ## Adding a new chapter or lesson
 

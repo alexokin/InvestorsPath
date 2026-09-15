@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 import { getAllLessons, getChapters } from "@/lib/content/loader";
 import { SITE_URL } from "@/lib/site";
 
-// Static export has no server to compute this per-request; force-static
-// makes `next build` emit sitemap.xml as a plain static file in out/.
+// force-static makes `next build` emit sitemap.xml as a plain static file
+// at build time rather than recomputing it per-request.
 export const dynamic = "force-static";
 
 const STATIC_ROUTES: { path: string; priority: number }[] = [

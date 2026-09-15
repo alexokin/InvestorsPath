@@ -1,10 +1,30 @@
-// Shared helpers so specs work against both an unprefixed build (default,
-// NEXT_PUBLIC_BASE_PATH unset) and a build made with a base path (e.g.
-// "/InvestorsPath", the configuration that actually deploys to GitHub
-// Pages). playwright.config.ts's webServer passes NEXT_PUBLIC_BASE_PATH
-// through to serve-out.mjs, which mounts ./out at that base path - so the
-// export under test and the URLs these tests hit must agree on it.
-export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+import type { Page } from "@playwright/test";
+
+// The app no longer deploys under a base path (that was a GitHub Pages
+// requirement); BASE_PATH stays as an empty-string constant so p()/rx() keep
+// working and specs need no edits.
+export const BASE_PATH = "";
+
+/** A mock-auth-mode user, matching lib/auth/mock.ts's MOCK_USERS.google. */
+export const MOCK_USER = {
+  id: "mock-google-user",
+  email: "demo@example.com",
+  name: "משתמש הדגמה",
+};
+
+/**
+ * Signs in via the mock-mode cookie (must be called before the first
+ * `page.goto`, since `addCookies` doesn't affect an already-loaded page).
+ */
+export async function signIn(page: Page, user = MOCK_USER): Promise<void> {
+  await page.context().addCookies([
+    {
+      name: "vip-mock-user",
+      value: encodeURIComponent(JSON.stringify(user)),
+      url: "http://localhost:4173",
+    },
+  ]);
+}
 
 /** Prefix an app-relative path (e.g. "/tools/dcf/") with BASE_PATH, for
  * `page.goto(...)`, `locator('a[href^="..."]')`, etc. */

@@ -1,10 +1,9 @@
 import { getChangelogEntries } from "@/lib/content/changelog";
 import { SITE_URL } from "@/lib/site";
 
-// Static export has no server to compute this per-request; force-static
-// makes `next build` emit /feed.xml as a plain static file in out/ (route
-// handlers are supported in `output: "export"` when marked force-static —
-// see app/sitemap.ts for the same pattern applied to a metadata route).
+// force-static makes `next build` emit /feed.xml as a plain static file at
+// build time rather than recomputing it per-request (see app/sitemap.ts for
+// the same pattern applied to a metadata route).
 export const dynamic = "force-static";
 
 function escapeXml(value: string): string {

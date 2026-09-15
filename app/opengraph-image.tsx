@@ -1,4 +1,4 @@
-// Static export requires route handlers (incl. OG images) to be force-static.
+// force-static generates this OG image once at build time instead of per-request.
 export const dynamic = "force-static";
 
 import { ImageResponse } from "next/og";

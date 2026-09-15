@@ -384,8 +384,8 @@ export function ProgressDashboard({ chapters }: { chapters: DashboardChapter[] }
 
       <Dialog open={resetOpen} onClose={() => setResetOpen(false)} title="איפוס ההתקדמות">
         <p className="text-sm text-foreground">
-          כל השיעורים שסומנו, תוצאות הבחנים, הסימניות וההערות יימחקו לצמיתות מהדפדפן הזה. אי אפשר
-          לבטל את הפעולה.
+          כל השיעורים שסומנו, תוצאות הבחנים, הסימניות וההערות יימחקו לצמיתות מהחשבון שלכם, בכל
+          המכשירים. אי אפשר לבטל את הפעולה.
         </p>
         <div className="mt-4 flex flex-wrap justify-end gap-2">
           <Button variant="secondary" size="sm" onClick={onExport}>

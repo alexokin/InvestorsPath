@@ -6,7 +6,6 @@
     "dev": "next dev",
     "prebuild": "npm run validate:content && npm run build:search-index",
     "build": "next build",
-    "postbuild": "node scripts/fix-segment-prefetch.mjs",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -15,9 +14,11 @@
     "build:search-index": "tsx scripts/build-search-index.ts",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "serve:out": "node scripts/serve-out.mjs"
+    "check:env": "node scripts/check-env.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0",
     "fuse.js": "^7.5.0",
     "gray-matter": "^4.0.3",
     "js-yaml": "^5.4.1",
@@ -41,7 +42,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
-    "http-server": "^14.1.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5",

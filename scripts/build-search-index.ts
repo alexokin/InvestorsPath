@@ -4,13 +4,12 @@
  *
  * Why a static JSON file in public/ rather than embedding the index as a
  * <script type="application/json"> tag in the root layout:
- *   - This is a fully static export (`output: "export"`); there is no server
- *     to compute anything per-request, so either approach has to happen at
- *     build time regardless.
+ *   - The index doesn't change per-request, so either approach has to
+ *     happen at build time regardless.
  *   - Embedding the index in the layout means every single page ships the
- *     entire index inline in its HTML (it can't be deduped across the
- *     static export the way a shared script chunk can), which bloats every
- *     page's payload for a feature most visits never use.
+ *     entire index inline in its HTML (it can't be deduped across pages the
+ *     way a shared script chunk can), which bloats every page's payload for
+ *     a feature most visits never use.
  *   - A public/search-index.json file is fetched once, lazily, only when the
  *     visitor actually opens the search dialog (Ctrl/Cmd+K or the search
  *     button), and the browser caches it across navigations since it's a

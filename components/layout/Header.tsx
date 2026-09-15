@@ -5,6 +5,8 @@ import Link from "next/link";
 import { BookOpen, ChevronDown, Menu } from "lucide-react";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { AccountMenu } from "@/components/auth/AccountMenu";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const links = [
   { href: "/curriculum/", label: "תוכנית הלימודים" },
@@ -75,6 +77,8 @@ function NavDropdown() {
 }
 
 export function Header() {
+  const { status, user, signOut } = useAuth();
+
   return (
     <header
       data-print-hide
@@ -100,6 +104,7 @@ export function Header() {
           <NavDropdown />
           <ThemeToggle />
           <SearchTrigger className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm text-muted transition-colors hover:border-primary hover:text-primary" />
+          <AccountMenu status={status} user={user} onSignOut={signOut} />
         </div>
       </div>
     </header>

@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { p, rx } from "./helpers";
+import { p, rx, signIn } from "./helpers";
 
 test("Ctrl+K search finds DCF and navigates on Enter", async ({ page }) => {
+  await signIn(page);
   await page.goto(p("/"));
 
   await page.keyboard.press("Control+k");
@@ -26,6 +27,7 @@ test("Ctrl+K search finds DCF and navigates on Enter", async ({ page }) => {
 });
 
 test("Ctrl+K search finds a Hebrew query and navigates on Enter", async ({ page }) => {
+  await signIn(page);
   await page.goto(p("/"));
 
   await page.keyboard.press("Control+k");

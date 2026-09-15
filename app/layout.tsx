@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Heebo } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { AppAuthProvider } from "@/components/auth/AppAuthProvider";
+import { SyncGate } from "@/components/auth/SyncGate";
 import { ProgressProvider } from "@/components/progress/ProgressProvider";
 import { CurrencyProvider } from "@/components/calculators/CurrencyProvider";
 import { SearchProvider } from "@/components/search/SearchProvider";
@@ -65,16 +67,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <ProgressProvider>
-          <CurrencyProvider>
-            <SearchProvider>
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <SearchDialog />
-            </SearchProvider>
-          </CurrencyProvider>
-        </ProgressProvider>
+        <AppAuthProvider>
+          <ProgressProvider>
+            <CurrencyProvider>
+              <SearchProvider>
+                <Header />
+                <main className="flex-1">
+                  <SyncGate>{children}</SyncGate>
+                </main>
+                <Footer />
+                <SearchDialog />
+              </SearchProvider>
+            </CurrencyProvider>
+          </ProgressProvider>
+        </AppAuthProvider>
         <ServiceWorkerRegistration />
         <Analytics />
       </body>

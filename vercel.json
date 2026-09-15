@@ -1,0 +1,4 @@
+{
+  "buildCommand": "npm run check:env && npm run build",
+  "regions": ["fra1"]
+}

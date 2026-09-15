@@ -1,12 +1,15 @@
 import { test, expect } from "@playwright/test";
-import { p, rx } from "./helpers";
+import { p, rx, signIn } from "./helpers";
 
 /**
- * Home -> first chapter -> first lesson -> quiz -> mark complete -> reload
- * and confirm the sidebar tick + localStorage persistence (vip:progress:v2).
+ * Home -> dashboard (signed in) -> first chapter -> first lesson -> quiz ->
+ * mark complete -> reload and confirm the sidebar tick + localStorage
+ * persistence (vip:progress:v2).
  */
 test("lesson flow: quiz, mark complete, persists across reload", async ({ page }) => {
+  await signIn(page);
   await page.goto(p("/"));
+  await expect(page).toHaveURL(rx("/dashboard/$"));
 
   // First chapter card under "פרקי הקורס".
   const chapterCards = page.locator(`a[href^="${p("/chapters/")}"]`);

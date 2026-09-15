@@ -1,3 +1,4 @@
+import { notifyStoreChange, type StoreChangeSource } from "@/lib/storage/bus";
 import { WORKSHEET_SECTIONS, type WorksheetSection } from "./template";
 import {
   WORKSHEET_IMPORT_ERRORS,
@@ -33,13 +34,25 @@ export function readWorksheets(): WorksheetStore {
   }
 }
 
-export function writeWorksheets(store: WorksheetStore): void {
+export function writeWorksheets(store: WorksheetStore, source: StoreChangeSource = "local"): void {
   const storage = getStorage();
   if (!storage) return;
   try {
     storage.setItem(KEY_V1, JSON.stringify(store));
+    notifyStoreChange("worksheets", source);
   } catch {
     // localStorage unavailable (private mode, quota) — fail silently.
+  }
+}
+
+export function clearWorksheets(source: StoreChangeSource = "local"): void {
+  const storage = getStorage();
+  if (!storage) return;
+  try {
+    storage.removeItem(KEY_V1);
+    notifyStoreChange("worksheets", source);
+  } catch {
+    // ignore
   }
 }
 

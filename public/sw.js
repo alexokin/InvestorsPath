@@ -10,16 +10,14 @@
 // existing tabs, so a version bump is what actually invalidates old entries —
 // simply editing files without bumping the version leaves stale responses in
 // place until they naturally fall out of the network-first/SWR strategies.
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 const APP_SHELL_CACHE = `app-shell-v${CACHE_VERSION}`;
 const STATIC_ASSETS_CACHE = `static-assets-v${CACHE_VERSION}`;
 const CURRENT_CACHES = new Set([APP_SHELL_CACHE, STATIC_ASSETS_CACHE]);
 
-// This worker's own env has no access to NEXT_PUBLIC_BASE_PATH (it's a
-// plain static file, not bundled), so the base path is derived from where
-// the browser fetched it from: it's always served from `<base>/sw.js`, so
-// resolving "./" against its own location gives "<base>/" and stripping the
-// trailing slash gives "<base>" (or "" when there is no base path).
+// The site is served from the domain root, so this is always "". Derived
+// (rather than hardcoded) since this worker's own env has no access to
+// build-time config — it's a plain static file, not bundled.
 const BASE = new URL("./", self.location.href).pathname.replace(/\/$/, "");
 
 const APP_SHELL_URLS = [`${BASE}/`, `${BASE}/offline/`, `${BASE}/manifest.webmanifest`];

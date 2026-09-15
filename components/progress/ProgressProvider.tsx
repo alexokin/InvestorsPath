@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { subscribeStoreChange } from "@/lib/storage/bus";
 import {
-  clearProgress,
   defaultProgress,
   lessonKey,
   readProgress,
@@ -52,6 +52,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   // setState updater) so early updates merge into the persisted state
   // instead of overwriting it with defaults.
   const hydratedRef = useRef(false);
+  // Set for the duration between a remote-sourced write landing in
+  // localStorage and this provider re-reading it, so an `update()` call
+  // racing that window merges onto the fresh remote state instead of the
+  // stale in-memory `prev`.
+  const staleRef = useRef(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage on mount
@@ -60,9 +65,20 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
 
+  useEffect(() => {
+    return subscribeStoreChange((change) => {
+      if (change.key !== "progress" || change.source !== "remote") return;
+      staleRef.current = true;
+      setState(() => {
+        staleRef.current = false;
+        return readProgress();
+      });
+    });
+  }, []);
+
   const update = (updater: (prev: ProgressState) => ProgressState) => {
     setState((prev) => {
-      const base = hydratedRef.current ? prev : readProgress();
+      const base = hydratedRef.current && !staleRef.current ? prev : readProgress();
       const next = updater(base);
       writeProgress(next);
       return next;
@@ -134,10 +150,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           return next;
         }),
       replaceState: (next) => update(() => ({ ...defaultProgress(), ...next, version: 2 })),
-      resetProgress: () => {
-        clearProgress();
-        setState(defaultProgress());
-      },
+      // Pushed as a write (not clearProgress) so the reset itself propagates
+      // through the sync engine as an empty object rather than being a
+      // silent local-only removal.
+      resetProgress: () => update(() => defaultProgress()),
     }),
     [state, hydrated]
   );

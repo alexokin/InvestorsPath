@@ -1,3 +1,4 @@
+import { notifyStoreChange, type StoreChangeSource } from "@/lib/storage/bus";
 import {
   IMPORT_ERRORS,
   progressV1Schema,
@@ -57,22 +58,24 @@ export function readProgress(): ProgressState {
   }
 }
 
-export function writeProgress(state: ProgressState): void {
+export function writeProgress(state: ProgressState, source: StoreChangeSource = "local"): void {
   const storage = getStorage();
   if (!storage) return;
   try {
     storage.setItem(KEY_V2, JSON.stringify(state));
+    notifyStoreChange("progress", source);
   } catch {
     // localStorage unavailable (private mode, quota) — fail silently.
   }
 }
 
-export function clearProgress(): void {
+export function clearProgress(source: StoreChangeSource = "local"): void {
   const storage = getStorage();
   if (!storage) return;
   try {
     storage.removeItem(KEY_V2);
     storage.removeItem(KEY_V1);
+    notifyStoreChange("progress", source);
   } catch {
     // ignore
   }

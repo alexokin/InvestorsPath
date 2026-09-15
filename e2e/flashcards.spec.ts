@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { p } from "./helpers";
+import { p, signIn } from "./helpers";
 
 test("flashcards: flip, grade, and persist across reload", async ({ page }) => {
+  await signIn(page);
   await page.goto(p("/flashcards/all/"));
 
   const card = page.getByRole("button", { name: /הצגת ההגדרה/ });

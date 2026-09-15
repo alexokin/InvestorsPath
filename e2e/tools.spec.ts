@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { test, expect } from "@playwright/test";
-import { p } from "./helpers";
+import { p, signIn } from "./helpers";
 
 /**
  * Read tool ids straight from lib/finance/tools.ts (source of truth) rather
@@ -20,6 +20,7 @@ function readToolIds(): string[] {
 const toolIds = readToolIds();
 
 test("tools index links to every calculator", async ({ page }) => {
+  await signIn(page);
   await page.goto(p("/tools/"));
   for (const id of toolIds) {
     await expect(page.locator(`a[href="${p(`/tools/${id}/`)}"]`)).toBeVisible();
@@ -32,13 +33,14 @@ for (const id of toolIds) {
     page.on("console", (msg) => {
       if (msg.type() !== "error") return;
       // Next's client segment-cache prefetch (`?_rsc=` / `__next.*.txt`) can 404
-      // against a static export; it is a harmless prefetch miss, not a page error.
+      // for a statically generated route; it is a harmless prefetch miss, not a page error.
       const src = msg.location()?.url ?? "";
       if (/_rsc=|__next\./.test(src)) return;
       consoleErrors.push(msg.text());
     });
     page.on("pageerror", (err) => consoleErrors.push(String(err)));
 
+    await signIn(page);
     await page.goto(p(`/tools/${id}/`));
     await expect(page.locator("h1")).toBeVisible();
 

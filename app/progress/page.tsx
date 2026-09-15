@@ -24,7 +24,8 @@ export default function ProgressPage() {
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <h1 className="text-2xl font-bold text-foreground sm:text-3xl">ההתקדמות שלי</h1>
       <p className="mt-2 text-muted">
-        כל הנתונים נשמרים בדפדפן שלכם בלבד. אפשר לייצא אותם לקובץ ולייבא במכשיר אחר.
+        ההתקדמות נשמרת בחשבון שלכם ומסתנכרנת בין המכשירים. אפשר גם לייצא אותה לקובץ ולייבא אותה
+        בהמשך.
       </p>
       <div className="mt-8">
         <ProgressDashboard chapters={chapters} />

@@ -12,10 +12,10 @@ import { useEffect, useRef, useState } from "react";
  *   It is hydration-safe: the very first render (server and client) always
  *   uses the schema defaults, and the real `window.location.search` is only
  *   read once, in a `useEffect` after mount — so SSR/CSR markup matches and
- *   there is no hydration warning. Static export forbids `useSearchParams`
- *   outside a `<Suspense>` boundary, so we deliberately never use it here;
- *   reading `window.location` in an effect sidesteps that requirement
- *   entirely.
+ *   there is no hydration warning. A statically generated page can't use
+ *   `useSearchParams` outside a `<Suspense>` boundary without forcing the
+ *   route dynamic, so we deliberately never use it here; reading
+ *   `window.location` in an effect sidesteps that requirement entirely.
  * - Writes use `history.replaceState` only (never `router.push`, never
  *   affects scroll position or the back-button history stack) and are
  *   debounced by 300ms so that fast typing never fights the URL, and so a

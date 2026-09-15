@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Dialog } from "@/components/ui/Dialog";
 import { useSearch } from "@/components/search/SearchProvider";
 import type { SearchEntryType, SearchIndexEntry } from "@/lib/content/search-index";
-import { withBasePath } from "@/lib/base-path";
 
 const TYPE_LABELS: Record<SearchEntryType, string> = {
   lesson: "שיעורים",
@@ -39,7 +38,7 @@ export function SearchDialog() {
   useEffect(() => {
     if (!open || entries !== null) return;
     let cancelled = false;
-    fetch(withBasePath("/search-index.json"))
+    fetch("/search-index.json")
       .then((res) => (res.ok ? (res.json() as Promise<SearchIndexEntry[]>) : []))
       .then((data) => {
         if (!cancelled) setEntries(data);
