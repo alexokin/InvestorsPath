@@ -3,7 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * E2E smoke suite against a production `next start` server.
  *
- * Locally: `npm run build && npm run e2e` (webServer starts the server and
+ * Locally: `npm run build:e2e && npm run e2e` (build:e2e forces mock auth mode
+ * even when .env.local holds real Supabase keys; webServer starts the server and
  * reuses it if already running on :4173).
  * In CI: the workflow builds first, then runs `playwright test` with
  * `reuseExistingServer: false` implied by CI env so a fresh server is used.
@@ -20,6 +21,7 @@ const channel = process.env.PW_CHANNEL || undefined;
 
 export default defineConfig({
   testDir: "./e2e",
+  globalSetup: "./e2e/global-setup.ts",
   timeout: 30_000,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

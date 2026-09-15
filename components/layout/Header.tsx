@@ -48,7 +48,7 @@ function NavDropdown() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-primary"
+        className="flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-primary"
       >
         <Menu className="size-4" />
         תפריט
@@ -103,7 +103,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <NavDropdown />
           <ThemeToggle />
-          <SearchTrigger className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 text-sm text-muted transition-colors hover:border-primary hover:text-primary" />
+          <SearchTrigger className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 h-9 text-sm text-muted transition-colors hover:border-primary hover:text-primary" />
           <AccountMenu status={status} user={user} onSignOut={signOut} />
         </div>
       </div>

@@ -105,7 +105,7 @@ npm run build                # outputs .next/
 ## End-to-end tests
 
 ```bash
-npm run build                                  # e2e runs against a production `next start` server
+npm run build:e2e                              # production build forced into mock auth mode (ignores Supabase keys in .env.local)
 npx playwright install --with-deps chromium    # one-time
 npm run e2e                                    # headless smoke suite (desktop + mobile viewport)
 npm run e2e:ui                                 # interactive mode

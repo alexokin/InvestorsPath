@@ -44,7 +44,7 @@ export function AccountMenu({ status, user, onSignOut }: AccountMenuProps) {
     return (
       <Link
         href="/login/"
-        className="rounded-md px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-primary"
+        className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-primary"
       >
         התחברות
       </Link>
@@ -61,7 +61,7 @@ export function AccountMenu({ status, user, onSignOut }: AccountMenuProps) {
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label={user.email ?? undefined}
-        className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-primary"
+        className="flex h-9 items-center gap-2 rounded-md px-2 text-sm font-medium text-muted transition-colors hover:bg-accent hover:text-primary"
       >
         {user.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element

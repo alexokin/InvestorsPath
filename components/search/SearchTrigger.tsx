@@ -14,7 +14,7 @@ export function SearchTrigger({ className, fullWidth = false }: { className?: st
       className={
         className ??
         [
-          "flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm text-muted transition-colors hover:border-primary hover:text-primary",
+          "flex items-center gap-2 rounded-lg border border-border bg-surface px-3 h-9 text-sm text-muted transition-colors hover:border-primary hover:text-primary",
           fullWidth ? "w-full" : "",
         ]
           .filter(Boolean)
